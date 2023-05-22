@@ -9,7 +9,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
@@ -33,26 +32,17 @@ public class Creator implements LevelsStore {
         Button backButton = new Button("Back");
         backButton.setPrefSize(game.buttonWidth/3, game.buttonHeight/3);
         backButton.setStyle("-fx-font-size: 20pt;");
-        backButton.setOnAction(e -> {
-            game.window.setScene(game.mainMenu);
-
-        });
+        backButton.setOnAction(e -> game.window.setScene(game.mainMenu));
 
         Button CPUButton = new Button("CPU");
         CPUButton.setPrefSize(game.buttonWidth, game.buttonHeight);
         CPUButton.setStyle("-fx-font-size: 30pt;");
-        CPUButton.setOnAction(e -> {
-            game.window.setScene(createLevelScene(levelNumber, true));
-
-        });
+        CPUButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, true)));
 
         Button playerButton = new Button("Player");
         playerButton.setPrefSize(game.buttonWidth, game.buttonHeight);
         playerButton.setStyle("-fx-font-size: 30pt;");
-        playerButton.setOnAction(e -> {
-            game.window.setScene(createLevelScene(levelNumber, false));
-
-        });
+        playerButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, false)));
 
         BorderPane root = new BorderPane();
         VBox centerLayout = new VBox();
@@ -406,9 +396,7 @@ public class Creator implements LevelsStore {
         exitButton.setStyle("-fx-font-size: 30pt;");
 
         // Add functionality to the buttons
-        levelSelectButton.setOnAction(e -> {
-            game.window.setScene(game.levelSelectionScene);
-        });
+        levelSelectButton.setOnAction(e -> game.window.setScene(game.levelSelectionScene));
 
         shopButton.setOnAction(e -> {
 
@@ -418,13 +406,24 @@ public class Creator implements LevelsStore {
             game.window.close(); // Close the application
         });
 
+        //Create label
+        Label label = new Label("Deep Sea Dilemma");
+        label.setStyle("-fx-font-size: 60pt;");
+        BorderPane.setAlignment(label, Pos.CENTER);
+
         // Create the main menu layout
         VBox mainMenuLayout = new VBox(20); // 20 is the spacing between elements
         mainMenuLayout.setAlignment(Pos.CENTER);
         mainMenuLayout.getChildren().addAll(levelSelectButton, shopButton, exitButton);
 
+        BorderPane root = new BorderPane();
+        BorderPane topBar = new BorderPane();
+        root.setTop(topBar);
+        topBar.setBottom(label);
+        root.setCenter(mainMenuLayout);
+
         // Create the scene and set it as the primary stage's scene
-        game.mainMenu = new Scene(mainMenuLayout);
+        game.mainMenu = new Scene(root);
 
     }
 
