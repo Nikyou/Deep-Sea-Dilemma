@@ -182,12 +182,13 @@ public class Creator implements LevelsStore {
             game.pathfinder.CalculateWinPositions();
         }
 
-        for (int i = 0; i < game.pathfinder.winPositions.size(); i++){
+        //DEBUGGING
+        /*for (int i = 0; i < game.pathfinder.winPositions.size(); i++){
             int [] cord = game.pathfinder.winPositions.get(i);
             Rectangle rectangle = new Rectangle(halfTileSize, halfTileSize);
             rectangle.setFill(Color.GREEN);
             grid.add(rectangle, cord[0], cord[1]);
-        }
+        }*/
 
 
 
