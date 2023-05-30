@@ -6,7 +6,7 @@ public class Initializer {
     private static Initializer instance = null;
 
     private String saveInformation;
-    private Game game = Game.Game();
+    private Game game = Game.Initialize();
 
     private Initializer()
     {
@@ -26,7 +26,7 @@ public class Initializer {
     }
 
     // Static method to create instance of Initializer class
-    public static Initializer Initializer()
+    public static Initializer Initialize()
     {
         // To ensure only one instance is created
         if (instance == null)

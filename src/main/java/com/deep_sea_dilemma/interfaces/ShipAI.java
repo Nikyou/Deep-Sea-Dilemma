@@ -1,15 +1,10 @@
 package com.deep_sea_dilemma.interfaces;
 
-public interface ShipAI {
-    default void AIMakeTurn(int difficulty) {
-        switch (difficulty) {
-            case 1 -> AIMakeTurnEasy();
-            case 2 -> AIMakeTurnNormal();
-            case 3 -> AIMakeTurnHard();
-        }
-    }
+import java.util.List;
 
-    void AIMakeTurnEasy();
-    void AIMakeTurnNormal();
-    void AIMakeTurnHard();
+public interface ShipAI {
+    void AIMakeTurn(int difficulty);
+    void AIMakeTurnEasy(List<int[]> allTurns);
+    void AIMakeTurnNormal(List<int[]> allTurns);
+    void AIMakeTurnHard(List<int[]> allTurns);
 }

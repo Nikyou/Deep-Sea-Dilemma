@@ -12,16 +12,16 @@ import java.util.Objects;
 
 public class Main extends Application {
 
-    private Game game = Game.Game();
-    private Initializer initializer = Initializer.Initializer();
-    private Creator creator = Creator.Creator();
+    private Game game = Game.Initialize();
+    private Initializer initializer = Initializer.Initialize();
+    private Creator creator = Creator.Initialize();
 
     public static void main(String[] args) {
         launch();
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         game.window = primaryStage;
 
         creator.createMainMenuScene();

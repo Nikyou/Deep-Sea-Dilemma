@@ -28,11 +28,56 @@ public interface LevelsStore {
                     {'T', 'G', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
                     {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
             },
+            // 2 level
+            {
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'S'},
+                    {'T', 'T', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'R', 'T', 'T', 'T', 'T', 'T', 'R', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'R'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'G', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+            },
+            // 3 level
+            {
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'S'},
+                    {'T', 'T', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'R', 'T', 'T', 'T', 'T', 'T', 'R', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'R'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'G', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+            },
+            // 4 level
+            {
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'S'},
+                    {'T', 'T', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'R', 'T', 'T', 'T', 'T', 'T', 'R', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'R'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'G', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+            },
     };
     int [][] levelMapSize = {
             // 0 level
             {10, 10},
             // 1 level
+            {10, 10},
+            // 2 level
+            {10, 10},
+            // 3 level
+            {10, 10},
+            // 4 level
             {10, 10},
     };
 
@@ -41,11 +86,23 @@ public interface LevelsStore {
             80,
             // 1 level
             80,
+            // 2 level
+            80,
+            // 3 level
+            80,
+            // 4 level
+            80,
     };
     int [] levelShipSpeed = {
             // 0 level
             3,
             // 1 level
+            3,
+            // 2 level
+            3,
+            // 3 level
+            3,
+            // 4 level
             3,
     };
     long [] levelAISeed = {
@@ -69,5 +126,27 @@ public interface LevelsStore {
             9040721391101870082L,
             // 9 level
             7111528997690110898L,
+    };
+    int [] levelAIDifficulty = {
+            // 0 level
+            0,
+            // 1 level
+            1,
+            // 2 level
+            1,
+            // 3 level
+            1,
+            // 4 level
+            2,
+            // 5 level
+            2,
+            // 6 level
+            2,
+            // 7 level
+            3,
+            // 8 level
+            3,
+            // 9 level
+            3,
     };
 }

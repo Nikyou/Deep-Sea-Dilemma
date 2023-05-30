@@ -6,7 +6,7 @@ public class Saver {
     private static Saver instance = null;
 
     private String saveInformation;
-    private Game game = Game.Game();
+    private Game game = Game.Initialize();
 
     private Saver()
     {
@@ -22,7 +22,7 @@ public class Saver {
     }
 
     // Static method to create instance of Initializer class
-    public static Saver Saver()
+    public static Saver Initialize()
     {
         // To ensure only one instance is created
         if (instance == null)

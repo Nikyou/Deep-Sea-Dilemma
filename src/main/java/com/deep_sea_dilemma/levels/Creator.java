@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,7 +21,7 @@ public class Creator implements LevelsStore {
     private static Creator instance = null;
 
     private String saveInformation;
-    private Game game = Game.Game();
+    private Game game = Game.Initialize();
 
     private Creator()
     {
@@ -99,15 +100,8 @@ public class Creator implements LevelsStore {
         AtomicBoolean isNotEnd = new AtomicBoolean(true);
         int[] changeTurn = new int[] {2, 1};
         //
+
         label.setText(ChangeTurnString(1, isAI));
-
-        //Set AI seed from storage
-        if (isAI){
-            game.ship.SetRandom(levelAISeed[levelNumber]);
-        }
-
-        //Initialize pathfinding
-        game.pathfinder.Initialize(LevelsStore.levelMap[levelNumber], LevelsStore.levelShipSpeed[levelNumber]);
 
         // Create map
         int tileSize = levelObjectSize[levelNumber];
@@ -131,79 +125,23 @@ public class Creator implements LevelsStore {
                 int finalX = x;
                 int finalY = y;
                 triangle1.setOnMouseClicked(event -> { // Left
-                    if (isNotEnd.get() && game.pathfinder.IsPathOk(finalX, finalY, game.ship.GetPosition(), game.goal.GetPosition(), "Left")){
-                        game.ship.Draw(finalX, finalY);
-                        switch (IsEnd()){
-                            case 1 -> {
-                                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI));
-                                isNotEnd.set(false);
-                            }
-                            case 2 -> {
-                                label.setText(WhoWonString(currentPlayer.get(), isAI));
-                                isNotEnd.set(false);
-                            }
-                            default -> {
-                                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
-                                label.setText(ChangeTurnString(currentPlayer.get(), isAI));
-                            }
-                        }
+                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Left", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
                 triangle2.setOnMouseClicked(event -> { // Top
-                    if (isNotEnd.get() && game.pathfinder.IsPathOk(finalX, finalY, game.ship.GetPosition(), game.goal.GetPosition(),"Top")){
-                        game.ship.Draw(finalX, finalY);
-                        switch (IsEnd()){
-                            case 1 -> {
-                                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI));
-                                isNotEnd.set(false);
-                            }
-                            case 2 -> {
-                                label.setText(WhoWonString(currentPlayer.get(), isAI));
-                                isNotEnd.set(false);
-                            }
-                            default -> {
-                                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
-                                label.setText(ChangeTurnString(currentPlayer.get(), isAI));
-                            }
-                        }
+                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
                 triangle3.setOnMouseClicked(event -> {  // Bottom
-                    if (isNotEnd.get() && game.pathfinder.IsPathOk(finalX, finalY, game.ship.GetPosition(), game.goal.GetPosition(),"Bottom")){
-                        game.ship.Draw(finalX, finalY);
-                        switch (IsEnd()){
-                            case 1 -> {
-                                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI));
-                                isNotEnd.set(false);
-                            }
-                            case 2 -> {
-                                label.setText(WhoWonString(currentPlayer.get(), isAI));
-                                isNotEnd.set(false);
-                            }
-                            default -> {
-                                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
-                                label.setText(ChangeTurnString(currentPlayer.get(), isAI));
-                            }
-                        }
+                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
                 triangle4.setOnMouseClicked(event -> {  // Right
-                    if (isNotEnd.get() && game.pathfinder.IsPathOk(finalX, finalY, game.ship.GetPosition(), game.goal.GetPosition(),"Right")){
-                        game.ship.Draw(finalX, finalY);
-                        switch (IsEnd()){
-                            case 1 -> {
-                                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI));
-                                isNotEnd.set(false);
-                            }
-                            case 2 -> {
-                                label.setText(WhoWonString(currentPlayer.get(), isAI));
-                                isNotEnd.set(false);
-                            }
-                            default -> {
-                                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
-                                label.setText(ChangeTurnString(currentPlayer.get(), isAI));
-                            }
-                        }
+                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
 
@@ -223,27 +161,35 @@ public class Creator implements LevelsStore {
                 triangle4.setTranslateX(triangle4.getTranslateX() + halfTileSize);
                 triangle4.setTranslateY(triangle4.getTranslateY());
 
+
+                game.DrawTile(x, y, tileSize, tileSize, grid);
+
                 switch (LevelsStore.levelMap[levelNumber][y][x]){
-                    case 'T' -> game.tile.Draw(x, y, tileSize, tileSize, grid);
-                    case 'S' -> {
-                        game.tile.Draw(x, y, tileSize, tileSize, grid);
-                        game.ship.Draw(x, y, tileSize, tileSize, grid);
-                    }
-                    case 'G' -> {
-                        game.tile.Draw(x, y, tileSize, tileSize, grid);
-                        game.goal.Draw(x, y, tileSize, tileSize, grid);
-                    }
-                    case 'R' -> {
-                        game.tile.Draw(x, y, tileSize, tileSize, grid);
-                        game.rock.Draw(x, y, tileSize, tileSize, grid);
-                    }
-                    case 'V' -> {
-                        game.tile.Draw(x, y, tileSize, tileSize, grid);
-                        game.vortex.Draw(x, y, tileSize, tileSize, grid);
-                    }
+                    case 'S' -> game.DrawShip(x, y, tileSize, tileSize, grid);
+                    case 'G' -> game.DrawGoal(x, y, tileSize, tileSize, grid);
+                    case 'R' -> game.DrawRock(x, y, tileSize, tileSize, grid);
+                    case 'V' -> game.DrawVortex(x, y, tileSize, tileSize, grid);
                 }
             }
         }
+
+        //Initialize pathfinding
+        game.pathfinder.Initialize(LevelsStore.levelMap[levelNumber], LevelsStore.levelShipSpeed[levelNumber], LevelsStore.levelMapSize[levelNumber], game.goal.GetPosition());
+
+        //Set AI settings
+        if (isAI){
+            game.ship.SetRandom(levelAISeed[levelNumber]);
+            game.pathfinder.CalculateWinPositions();
+        }
+
+        for (int i = 0; i < game.pathfinder.winPositions.size(); i++){
+            int [] cord = game.pathfinder.winPositions.get(i);
+            Rectangle rectangle = new Rectangle(halfTileSize, halfTileSize);
+            rectangle.setFill(Color.GREEN);
+            grid.add(rectangle, cord[0], cord[1]);
+        }
+
+
 
         // Create the scene
         return new Scene(root);
@@ -277,7 +223,7 @@ public class Creator implements LevelsStore {
         });
 
         //Initialize pathfinding
-        game.pathfinder.Initialize(LevelsStore.levelMap[0], LevelsStore.levelShipSpeed[0]);
+        game.pathfinder.Initialize(LevelsStore.levelMap[0], LevelsStore.levelShipSpeed[0], LevelsStore.levelMapSize[0], game.goal.GetPosition());
 
         // Add the grid to the center of the border pane
         BorderPane.setAlignment(backButton, Pos.TOP_LEFT);
@@ -535,10 +481,48 @@ public class Creator implements LevelsStore {
         }
     }
 
+    private void MakeTurnPlayer(int finalX, int finalY, Label label, int[] changeTurn, AtomicInteger currentPlayer, AtomicBoolean isNotEnd, boolean isAI, int AIDifficulty){
+        game.DrawShip(finalX, finalY);
+        switch (IsEnd()){
+            case 1 -> {
+                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI));
+                isNotEnd.set(false);
+            }
+            case 2 -> {
+                label.setText(WhoWonString(currentPlayer.get(), isAI));
+                isNotEnd.set(false);
+            }
+            default -> {
+                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
+                label.setText(ChangeTurnString(currentPlayer.get(), isAI));
+                if (isAI){
+                    MakeTurnAI(label,  changeTurn,  currentPlayer,  isNotEnd, AIDifficulty);
+                }
+            }
+        }
+    }
+
+    private void MakeTurnAI(Label label, int[] changeTurn, AtomicInteger currentPlayer, AtomicBoolean isNotEnd, int AIDifficulty){
+        game.AIMakeTurn(AIDifficulty);
+        switch (IsEnd()){
+            case 1 -> {
+                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], true));
+                isNotEnd.set(false);
+            }
+            case 2 -> {
+                label.setText(WhoWonString(currentPlayer.get(), true));
+                isNotEnd.set(false);
+            }
+            default -> {
+                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
+                label.setText(ChangeTurnString(currentPlayer.get(), true));
+            }
+        }
+    }
 
 
     // Static method to create instance of Initializer class
-    public static Creator Creator()
+    public static Creator Initialize()
     {
         // To ensure only one instance is created
         if (instance == null)
