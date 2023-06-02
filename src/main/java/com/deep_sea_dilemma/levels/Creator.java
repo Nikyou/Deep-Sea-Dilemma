@@ -1,6 +1,7 @@
 package com.deep_sea_dilemma.levels;
 
 import com.deep_sea_dilemma.interfaces.Game;
+import com.deep_sea_dilemma.objects.Arrow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +13,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -95,6 +95,7 @@ public class Creator implements LevelsStore {
         topContainer.setCenter(label);
 
 
+
         //Game variables
         AtomicInteger currentPlayer = new AtomicInteger(1);
         AtomicBoolean isNotEnd = new AtomicBoolean(true);
@@ -106,6 +107,9 @@ public class Creator implements LevelsStore {
         // Create map
         int tileSize = levelObjectSize[levelNumber];
         double halfTileSize = tileSize / 2;
+        // Create arrow
+        Arrow arrow = new Arrow(grid,tileSize);
+
         // Populate the grid with squares
         for (int y = 0; y < LevelsStore.levelMapSize[levelNumber][0]; y++) {
             for (int x = 0; x < LevelsStore.levelMapSize[levelNumber][1]; x++) {
@@ -129,19 +133,58 @@ public class Creator implements LevelsStore {
                         MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
+                triangle1.setOnMouseEntered(event -> {
+                    if(arrow.IsShown()){
+                        arrow.Clear();
+                    }
+                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Left", currentPlayer.get(), isAI)){
+                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Left");
+                        arrow.toFront();
+                    }
+                });
+
                 triangle2.setOnMouseClicked(event -> { // Top
                     if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
                         MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
+                triangle2.setOnMouseEntered(event -> {
+                    if(arrow.IsShown()){
+                        arrow.Clear();
+                    }
+                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
+                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Top");
+                        arrow.toFront();
+                    }
+                });
+
                 triangle3.setOnMouseClicked(event -> {  // Bottom
                     if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
                         MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
                     }
                 });
+                triangle3.setOnMouseEntered(event -> {
+                    if(arrow.IsShown()){
+                        arrow.Clear();
+                    }
+                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
+                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Bottom");
+                        arrow.toFront();
+                    }
+                });
+
                 triangle4.setOnMouseClicked(event -> {  // Right
                     if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
                         MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                    }
+                });
+                triangle4.setOnMouseEntered(event -> {
+                    if(arrow.IsShown()){
+                        arrow.Clear();
+                    }
+                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
+                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Right");
+                        arrow.toFront();
                     }
                 });
 
@@ -209,7 +252,6 @@ public class Creator implements LevelsStore {
         grid.setHgap(0);
         grid.setVgap(0);
 
-        // Create the button
 
         // Create the border pane and add the button to it
         BorderPane root = new BorderPane();
@@ -277,6 +319,7 @@ public class Creator implements LevelsStore {
                     triangle4.setFill(Color.BLUE);
                     game.ship.Draw(finalX, finalY);
                 });
+
 
                 // Add the four triangles to the grid
                 grid.add(triangle1, x, y);

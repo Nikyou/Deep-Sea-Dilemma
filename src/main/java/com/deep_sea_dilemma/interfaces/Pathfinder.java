@@ -1,6 +1,9 @@
 package com.deep_sea_dilemma.interfaces;
 
 
+import javafx.scene.image.ImageView;
+import javafx.scene.transform.Rotate;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,19 +33,55 @@ public class Pathfinder {
     public boolean IsPathOkCloser(int x, int y, int[] shipPos){
         return (Math.abs(goalPos[0] - x) + Math.abs(goalPos[1] - y)) < (Math.abs(goalPos[0] - shipPos[0]) + Math.abs(goalPos[1] - shipPos[1]));
     }
+    public boolean IsPathOkOrient(int x, int y, int[] shipPos, String orientation){
+        switch (orientation){
+            case "Top" -> {
+                if (y == shipPos[1]){
+                    return false;
+                }
+                if (shipPos[1] > y){
+                    return false;
+                }
+            }
+            case "Bottom" -> {
+                if (y == shipPos[1]){
+                    return false;
+                }
+                if (shipPos[1] < y){
+                    return false;
+                }
+            }
+            case "Right" -> {
+                if (x == shipPos[0]){
+                    return false;
+                }
+                if (shipPos[0] < x){
+                    return false;
+                }
+            }
+            case "Left" -> {
+                if (x == shipPos[0]){
+                    return false;
+                }
+                if (shipPos[0] > x){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public boolean IsPathOk(int x, int y, int[] shipPos, String orientation){
-        if(IsPathOkSpeed(x,y, shipPos) && IsPathOkCloser(x,y, shipPos)){
-            return true;
-        }
-        return false;
+        return IsPathOkSpeed(x, y, shipPos) && IsPathOkCloser(x, y, shipPos) && IsPathOkOrient(x, y, shipPos, orientation);
     }
+
+
 
     public boolean IsTurnLegal(boolean isNotEnd, int x, int y, int[] shipPos, String orientation, int currentPlayer, boolean isAI) {
         if (currentPlayer == 2 && isAI) {
             return false;
         }
-        return isNotEnd && this.IsPathOk(x, y, shipPos,"Top");
+        return isNotEnd && this.IsPathOk(x, y, shipPos,orientation);
     }
 
     public List<int[]> GetAllPossibleTurns(int[] shipPos){

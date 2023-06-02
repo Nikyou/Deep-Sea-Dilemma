@@ -8,12 +8,12 @@ import java.util.*;
 
 public class Ship extends Entity implements ShipAI {
 
-    Pathfinder pathfinder = Pathfinder.Initialize();
-    int[] position = new int[2];
-    GridPane grid;
+    private Pathfinder pathfinder = Pathfinder.Initialize();
+    private int[] position = new int[2];
+    private GridPane grid;
 
-    Random generator;
-    long seed;
+    private Random generator;
+    private long seed;
 
     @Override
     public void Draw(int x, int y, int width, int height, GridPane grid) {
@@ -41,8 +41,18 @@ public class Ship extends Entity implements ShipAI {
         position = cord;
     }
 
+    @Override
     public void SetRandom(long seed){
         this.seed = seed;
+    }
+
+    @Override
+    public void SetGenerator() {
+        int tempX = ReturnNotZero(position[0]);
+        int tempY = ReturnNotZero(position[1]);
+
+        long tempSeed = seed / tempX * tempY;
+        generator = new Random(tempSeed);
     }
 
     public void SetPosition(int x, int y){
@@ -63,22 +73,7 @@ public class Ship extends Entity implements ShipAI {
 
     @Override
     public void AIMakeTurn(int difficulty) {
-        int tempX;
-        if (position[0] == 0){
-            tempX = 1;
-        } else {
-            tempX = position[0];
-        }
-
-        int tempY;
-        if (position[1] == 0){
-            tempY = 1;
-        } else {
-            tempY = position[1];
-        }
-
-        long tempSeed = seed / tempX * tempY;
-        generator = new Random(tempSeed);
+        SetGenerator();
 
         List<int[]> allTurns = pathfinder.GetAllPossibleTurns(position);
 
@@ -113,23 +108,8 @@ public class Ship extends Entity implements ShipAI {
             allTurns.subList(0, nToRemove).clear();
         }
 
-        int tempX;
-        if (position[0] == 0){
-            tempX = 1;
-        } else {
-            tempX = position[0];
-        }
+        SetGenerator();
 
-        int tempY;
-        if (position[1] == 0){
-            tempY = 1;
-        } else {
-            tempY = position[1];
-        }
-        long tempSeed = seed / tempX * tempY;
-        generator = new Random(tempSeed);
-        System.out.println(tempX + " " + tempY + ": removed " + nToRemove + " left " + allTurns.size() + " win "+ winningPos.size());
-        allTurns.addAll(winningPos);
         allTurns.addAll(winningPos);
         int i = generator.nextInt(allTurns.size());
         Draw(allTurns.get(i));
@@ -154,28 +134,14 @@ public class Ship extends Entity implements ShipAI {
             allTurns.subList(0, nToRemove).clear();
         }
 
-        int tempX;
-        if (position[0] == 0){
-            tempX = 1;
-        } else {
-            tempX = position[0];
-        }
+        SetGenerator();
 
-        int tempY;
-        if (position[1] == 0){
-            tempY = 1;
-        } else {
-            tempY = position[1];
-        }
-        long tempSeed = seed / tempX * tempY;
-        generator = new Random(tempSeed);
-        System.out.println(tempX + " " + tempY + ": removed " + nToRemove + " left " + allTurns.size() + " win "+ winningPos.size());
         allTurns.addAll(winningPos);
         int i = generator.nextInt(allTurns.size());
         Draw(allTurns.get(i));
     }
 
-    //Internal check
+    //Internal check if in elements is in array
     private boolean ArrayContains (List<int[]> list, int[] item){
         for (int [] i: list){
             if (i[0] == item[0] && i[1] == item[1]){
@@ -183,5 +149,13 @@ public class Ship extends Entity implements ShipAI {
             }
         }
         return false;
+    }
+    //Internal check for not zero
+    private int ReturnNotZero (int item){
+        if (item == 0){
+            return 1;
+        } else {
+            return item;
+        }
     }
 }
