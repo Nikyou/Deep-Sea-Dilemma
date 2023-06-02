@@ -72,26 +72,33 @@ public class Ship extends Entity implements ShipAI {
     }
 
     @Override
-    public void AIMakeTurn(int difficulty) {
+    public int[] AIMakeTurn(int difficulty) {
         SetGenerator();
 
         List<int[]> allTurns = pathfinder.GetAllPossibleTurns(position);
 
         switch (difficulty) {
-            case 1 -> AIMakeTurnEasy(allTurns);
-            case 2 -> AIMakeTurnNormal(allTurns);
-            case 3 -> AIMakeTurnHard(allTurns);
+            case 1 -> {
+                return AIMakeTurnEasy(allTurns);
+            }
+            case 2 -> {
+                return AIMakeTurnNormal(allTurns);
+            }
+            case 3 -> {
+                return AIMakeTurnHard(allTurns);
+            }
         }
+        return new int[]{0, 0};
     }
 
     @Override
-    public void AIMakeTurnEasy(List<int[]> allTurns) {
+    public int[] AIMakeTurnEasy(List<int[]> allTurns) {
         int i = generator.nextInt(allTurns.size());
-        Draw(allTurns.get(i));
+        return allTurns.get(i);
     }
 
     @Override
-    public void AIMakeTurnNormal(List<int[]> allTurns) {
+    public int[] AIMakeTurnNormal(List<int[]> allTurns) {
         double percent = 0.5;
         List<int[]> winningPos = new ArrayList<>();
         for (int[] i : allTurns){
@@ -112,11 +119,11 @@ public class Ship extends Entity implements ShipAI {
 
         allTurns.addAll(winningPos);
         int i = generator.nextInt(allTurns.size());
-        Draw(allTurns.get(i));
+        return allTurns.get(i);
     }
 
     @Override
-    public void AIMakeTurnHard(List<int[]> allTurns) {
+    public int[] AIMakeTurnHard(List<int[]> allTurns) {
         double percent = 0.8;
 
         List<int[]> winningPos = new ArrayList<>();
@@ -138,7 +145,7 @@ public class Ship extends Entity implements ShipAI {
 
         allTurns.addAll(winningPos);
         int i = generator.nextInt(allTurns.size());
-        Draw(allTurns.get(i));
+        return allTurns.get(i);
     }
 
     //Internal check if in elements is in array

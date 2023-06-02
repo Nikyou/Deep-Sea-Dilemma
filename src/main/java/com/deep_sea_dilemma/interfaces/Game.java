@@ -14,6 +14,7 @@ public class Game {
     public Goal goal = new Goal();
     public Rock rock = new Rock();
     public Vortex vortex = new Vortex();
+    public Arrow arrow;
     public Pathfinder pathfinder = Pathfinder.Initialize();
 
     public int buttonWidth = 300;
@@ -47,8 +48,8 @@ public class Game {
     public void DrawShip (int x, int y){
         ship.Draw(x, y);
     }
-    public void AIMakeTurn (int difficulty){
-        ship.AIMakeTurn(difficulty);
+    public int[] AIMakeTurn (int difficulty){
+        return ship.AIMakeTurn(difficulty);
     }
 
     // Static method to create instance of Initializer class

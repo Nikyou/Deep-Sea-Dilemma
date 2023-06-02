@@ -2,6 +2,7 @@ package com.deep_sea_dilemma.levels;
 
 import com.deep_sea_dilemma.interfaces.Game;
 import com.deep_sea_dilemma.objects.Arrow;
+import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.util.Duration;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -99,6 +101,7 @@ public class Creator implements LevelsStore {
         //Game variables
         AtomicInteger currentPlayer = new AtomicInteger(1);
         AtomicBoolean isNotEnd = new AtomicBoolean(true);
+        AtomicBoolean canMove = new AtomicBoolean(true);
         int[] changeTurn = new int[] {2, 1};
         //
 
@@ -108,7 +111,7 @@ public class Creator implements LevelsStore {
         int tileSize = levelObjectSize[levelNumber];
         double halfTileSize = tileSize / 2;
         // Create arrow
-        Arrow arrow = new Arrow(grid,tileSize);
+        game.arrow = new Arrow(grid,tileSize);
 
         // Populate the grid with squares
         for (int y = 0; y < LevelsStore.levelMapSize[levelNumber][0]; y++) {
@@ -129,62 +132,82 @@ public class Creator implements LevelsStore {
                 int finalX = x;
                 int finalY = y;
                 triangle1.setOnMouseClicked(event -> { // Left
-                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Left", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                    if (canMove.get() &&
+                            game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Left", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        if(game.arrow.IsShown()){
+                            game.arrow.Clear();
+                        }
                     }
                 });
                 triangle1.setOnMouseEntered(event -> {
-                    if(arrow.IsShown()){
-                        arrow.Clear();
-                    }
-                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Left", currentPlayer.get(), isAI)){
-                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Left");
-                        arrow.toFront();
+                    if (canMove.get()){
+                        if(game.arrow.IsShown()){
+                            game.arrow.Clear();
+                        }
+                        if(!game.arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Left", currentPlayer.get(), isAI)){
+                            game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Left");
+                        }
                     }
                 });
 
                 triangle2.setOnMouseClicked(event -> { // Top
-                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                    if (canMove.get() &&
+                            game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        if(game.arrow.IsShown()){
+                            game.arrow.Clear();
+                        }
                     }
                 });
                 triangle2.setOnMouseEntered(event -> {
-                    if(arrow.IsShown()){
-                        arrow.Clear();
-                    }
-                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
-                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Top");
-                        arrow.toFront();
+                    if (canMove.get()) {
+                        if (game.arrow.IsShown()) {
+                            game.arrow.Clear();
+                        }
+                        if (!game.arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Top", currentPlayer.get(), isAI)) {
+                            game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Top");
+                        }
                     }
                 });
 
                 triangle3.setOnMouseClicked(event -> {  // Bottom
-                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                    if (canMove.get() &&
+                            game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        if(game.arrow.IsShown()){
+                            game.arrow.Clear();
+                        }
                     }
                 });
                 triangle3.setOnMouseEntered(event -> {
-                    if(arrow.IsShown()){
-                        arrow.Clear();
-                    }
-                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
-                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Bottom");
-                        arrow.toFront();
+                    if (canMove.get()) {
+                        if (game.arrow.IsShown()) {
+                            game.arrow.Clear();
+                        }
+                        if (!game.arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Bottom", currentPlayer.get(), isAI)) {
+                            game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Bottom");
+                        }
                     }
                 });
 
                 triangle4.setOnMouseClicked(event -> {  // Right
-                    if (game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                    if (canMove.get() &&
+                            game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
+                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        if(game.arrow.IsShown()){
+                            game.arrow.Clear();
+                        }
                     }
                 });
                 triangle4.setOnMouseEntered(event -> {
-                    if(arrow.IsShown()){
-                        arrow.Clear();
-                    }
-                    if(!arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
-                        arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Right");
-                        arrow.toFront();
+                    if (canMove.get()) {
+                        if (game.arrow.IsShown()) {
+                            game.arrow.Clear();
+                        }
+                        if (!game.arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Right", currentPlayer.get(), isAI)) {
+                            game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, "Right");
+                        }
                     }
                 });
 
@@ -525,7 +548,8 @@ public class Creator implements LevelsStore {
         }
     }
 
-    private void MakeTurnPlayer(int finalX, int finalY, Label label, int[] changeTurn, AtomicInteger currentPlayer, AtomicBoolean isNotEnd, boolean isAI, int AIDifficulty){
+    private void MakeTurnPlayer(int finalX, int finalY, Label label, int[] changeTurn, AtomicInteger currentPlayer,
+                                AtomicBoolean isNotEnd, AtomicBoolean canMove, boolean isAI, int AIDifficulty){
         game.DrawShip(finalX, finalY);
         switch (IsEnd()){
             case 1 -> {
@@ -540,28 +564,69 @@ public class Creator implements LevelsStore {
                 currentPlayer.set(changeTurn[currentPlayer.get()-1]);
                 label.setText(ChangeTurnString(currentPlayer.get(), isAI));
                 if (isAI){
-                    MakeTurnAI(label,  changeTurn,  currentPlayer,  isNotEnd, AIDifficulty);
+                    canMove.set(false);
+                    MakeTurnAI(label,  changeTurn,  currentPlayer,  isNotEnd, canMove, AIDifficulty);
                 }
             }
         }
     }
 
-    private void MakeTurnAI(Label label, int[] changeTurn, AtomicInteger currentPlayer, AtomicBoolean isNotEnd, int AIDifficulty){
-        game.AIMakeTurn(AIDifficulty);
-        switch (IsEnd()){
-            case 1 -> {
-                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], true));
-                isNotEnd.set(false);
-            }
-            case 2 -> {
-                label.setText(WhoWonString(currentPlayer.get(), true));
-                isNotEnd.set(false);
-            }
-            default -> {
-                currentPlayer.set(changeTurn[currentPlayer.get()-1]);
-                label.setText(ChangeTurnString(currentPlayer.get(), true));
-            }
+    private void MakeTurnAI(Label label, int[] changeTurn, AtomicInteger currentPlayer, AtomicBoolean isNotEnd,
+                            AtomicBoolean canMove, int AIDifficulty){
+        int[] cord = game.AIMakeTurn(AIDifficulty);
+
+        if (game.arrow.IsShown()) {
+            game.arrow.Clear();
         }
+        String orientation = "Left";
+        if (game.pathfinder.IsPathOkRock(cord[0], cord[1], game.ship.GetPosition(), "Top") &&
+                game.pathfinder.IsPathOkOrient(cord[0], cord[1], game.ship.GetPosition(), "Top")) {
+            orientation = "Top";
+        }
+        if (game.pathfinder.IsPathOkRock(cord[0], cord[1], game.ship.GetPosition(), "Right") &&
+                game.pathfinder.IsPathOkOrient(cord[0], cord[1], game.ship.GetPosition(), "Right")) {
+            orientation = "Right";
+        }
+        if (game.pathfinder.IsPathOkRock(cord[0], cord[1], game.ship.GetPosition(), "Bottom") &&
+                game.pathfinder.IsPathOkOrient(cord[0], cord[1], game.ship.GetPosition(), "Bottom")) {
+            orientation = "Bottom";
+        }
+
+        // Delay for 2 seconds
+        PauseTransition delay1 = new PauseTransition(Duration.seconds(1));
+        PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
+
+        delay2.setOnFinished(event -> {
+            // Code to be executed after the delay
+            game.DrawShip(cord[0], cord[1]);
+            game.arrow.Clear();
+            canMove.set(true);
+
+            switch (IsEnd()){
+                case 1 -> {
+                    label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], true));
+                    isNotEnd.set(false);
+                }
+                case 2 -> {
+                    label.setText(WhoWonString(currentPlayer.get(), true));
+                    isNotEnd.set(false);
+                }
+                default -> {
+                    currentPlayer.set(changeTurn[currentPlayer.get()-1]);
+                    label.setText(ChangeTurnString(currentPlayer.get(), true));
+                }
+            }
+        });
+
+        String finalOrientation = orientation;
+        delay1.setOnFinished(event -> {
+            // Code to be executed after the delay
+            game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], cord[0], cord[1], finalOrientation);
+            delay2.play();
+        });
+
+        delay1.play();
+
     }
 
 

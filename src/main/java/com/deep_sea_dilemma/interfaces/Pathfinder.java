@@ -26,11 +26,11 @@ public class Pathfinder {
         this.goalPos[1] = goalPos[1];
     }
 
-    public boolean IsPathOkSpeed(int x, int y, int[] shipPos){
+    private boolean IsPathOkSpeed(int x, int y, int[] shipPos){
         if (shipPos[0] == x && shipPos[1] == y){return false;}
         return (Math.abs(x - shipPos[0]) + Math.abs(y - shipPos[1])) <= shipSpeed;
     }
-    public boolean IsPathOkCloser(int x, int y, int[] shipPos){
+    private boolean IsPathOkCloser(int x, int y, int[] shipPos){
         return (Math.abs(goalPos[0] - x) + Math.abs(goalPos[1] - y)) < (Math.abs(goalPos[0] - shipPos[0]) + Math.abs(goalPos[1] - shipPos[1]));
     }
     public boolean IsPathOkOrient(int x, int y, int[] shipPos, String orientation){
@@ -71,8 +71,55 @@ public class Pathfinder {
         return true;
     }
 
+    public boolean IsPathOkRock(int x, int y, int[] shipPos, String orientation){
+        int lineType = 0;
+        if (shipPos[1] == y) {
+            lineType = 1; //only horizontal
+        }
+        if (shipPos[0] == x) {
+            lineType = 2; //only vertical
+        }
+
+        switch (orientation){
+            case "Top", "Bottom" -> {
+                switch (lineType){
+                    case 0, 2 -> {
+                        if (RockOnPath(x, y, shipPos[0], shipPos[1], true)){
+                            return false;
+                        }
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+
+            }
+            case "Right", "Left" -> {
+                switch (lineType){
+                    case 0, 1 -> {
+                        if (RockOnPath(x, y, shipPos[0], shipPos[1], false)){
+                            return false;
+                        }
+                    }
+                    default -> {
+                        return false;
+                    }
+                }
+            }
+            default -> {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean IsPathOk(int x, int y, int[] shipPos, String orientation){
-        return IsPathOkSpeed(x, y, shipPos) && IsPathOkCloser(x, y, shipPos) && IsPathOkOrient(x, y, shipPos, orientation);
+        return (
+                IsPathOkSpeed(x, y, shipPos)
+                && IsPathOkCloser(x, y, shipPos)
+                && IsPathOkOrient(x, y, shipPos, orientation)
+                && IsPathOkRock(x, y, shipPos, orientation)
+        );
     }
 
 
@@ -94,7 +141,11 @@ public class Pathfinder {
         finalY = Math.min(shipPos[1] + shipSpeed, levelMapSizeY);
         for (int x = startX; x < finalX; x++){
             for (int y = startY; y < finalY; y++){
-                if (IsPathOk(x, y, shipPos, "")) {
+                if (IsPathOk(x, y, shipPos, "Top")
+                        || IsPathOk(x, y, shipPos, "Right")
+                        || IsPathOk(x, y, shipPos, "Bottom")
+                        || IsPathOk(x, y, shipPos, "Left")
+                ) {
                     result.add(new int[]{x, y});
                 }
             }
@@ -118,6 +169,52 @@ public class Pathfinder {
                 }
             }
         }
+    }
+
+    private boolean RockOnPath (int startX, int startY, int endX, int endY, boolean isVertical){
+        int tempSX, tempSY, tempEX, tempEY;
+
+        if (startX < endX){
+            tempSX = startX;
+            tempEX = endX;
+        }else {
+            tempSX = endX;
+            tempEX = startX;
+        }
+
+        if (startY < endY){
+            tempSY = startY;
+            tempEY = endY;
+        }else {
+            tempSY = endY;
+            tempEY = startY;
+        }
+
+        for (int i = tempSY; i <= tempEY; i++){
+            if (isVertical){
+                if (mapLayout[i][startX] == 'R'){
+                    return true;
+                }
+            } else {
+                if (mapLayout[i][endX] == 'R'){
+                    return true;
+                }
+            }
+
+        }
+
+        for (int i = tempSX; i <= tempEX; i++){
+            if (isVertical) {
+                if (mapLayout[endY][i] == 'R') {
+                    return true;
+                }
+            } else {
+                if (mapLayout[startY][i] == 'R') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static Pathfinder Initialize()
