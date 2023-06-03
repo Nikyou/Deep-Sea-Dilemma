@@ -1,0 +1,80 @@
+.button {
+    -fx-background-color: transparent; /* Transparent background */
+    -fx-background-radius: 0; /* Remove rounded corners */
+    -fx-border-color: transparent; /* Transparent border */
+    -fx-padding: 0; /* Remove padding */
+    -fx-background-image: url("./wood_button.png"); /* Background image */
+    -fx-background-size: cover;
+    -fx-text-fill: #FBF6E9; /* Text color */
+    -fx-font-family: "Friz Quadrata", sans-serif; /* Font family */
+    -fx-font-size: 48px; /* Font size */
+    -fx-cursor: hand; /* Cursor on hover */
+}
+
+.button:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 8, 0, 0, 0); /* Add drop shadow effect on hover */
+}
+
+.button:pressed {
+    -fx-background-image: url("./wood_button_pressed.png"); /* Darker background image */
+}
+
+.button.back {
+    -fx-font-size: 30px;
+}
+
+.button.shop {
+    -fx-font-size: 36px;
+    -fx-background-size: stretch;
+}
+
+.label {
+    -fx-font-family: "Friz Quadrata", sans-serif;
+    -fx-background-image: url("./wood_sign.png");
+    -fx-background-size: cover;
+    -fx-alignment: center;
+    -fx-text-fill: #FBF6E9;
+}
+
+.label.menu-title {
+    -fx-pref-width: 600px;
+    -fx-pref-height: 100px;
+    -fx-background-size: stretch;
+    -fx-font-size: 60px;
+    -fx-font-weight: bold;
+}
+
+.label.turn-order {
+    -fx-pref-width: 250px;
+    -fx-pref-height: 80px;
+    -fx-font-size: 36px;
+}
+
+.label.shop-price {
+    -fx-background-image: url("./gold_coin.png");
+    -fx-text-fill: #404040;
+    -fx-font-size: 32px;
+    -fx-pref-width: 48px;
+    -fx-pref-height: 48px;
+}
+
+.label.shop-title {
+    -fx-pref-width: 320px;
+    -fx-pref-width: 500px;
+    -fx-pref-height: 102px;
+    -fx-background-size: stretch;
+    -fx-font-size: 60px;
+    -fx-font-weight: bold;
+}
+
+.label.shop-item {
+    -fx-font-size: 30px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 48px;
+}
+.label.shop-gold-counter {
+    -fx-text-fill: #EBD45F;
+    -fx-font-size: 30px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 48px;
+}

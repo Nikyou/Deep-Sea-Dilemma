@@ -1,9 +1,5 @@
 package com.deep_sea_dilemma.interfaces;
 
-
-import javafx.scene.image.ImageView;
-import javafx.scene.transform.Rotate;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +118,61 @@ public class Pathfinder {
         );
     }
 
+    public int[] GetVortexPosition (int startX, int startY, int endX, int endY, String orientation){
+        int tempSX, tempSY, tempEX, tempEY;
 
+        boolean isVertical = false;
+        switch (orientation){
+            case "Top", "Bottom" -> isVertical = true;
+        }
+
+        if (startX < endX){
+            tempSX = startX;
+            tempEX = endX;
+        }else {
+            tempSX = endX;
+            tempEX = startX;
+        }
+
+        if (startY < endY){
+            tempSY = startY;
+            tempEY = endY;
+        }else {
+            tempSY = endY;
+            tempEY = startY;
+        }
+
+        for (int i = tempSY; i <= tempEY; i++){
+            if (i != startY){
+                if (isVertical){
+                    if (mapLayout[i][endX] == 'V'){
+                        return new int[] {endX, i};
+                    }
+                } else {
+                    if (mapLayout[i][startX] == 'V'){
+                        return new int[] {startX, i};
+                    }
+                }
+            }
+
+        }
+
+        for (int i = tempSX; i <= tempEX; i++){
+            if (i != startX){
+                if (isVertical) {
+                    if (mapLayout[startY][i] == 'V') {
+                        return new int[] {i, startY};
+                    }
+                } else {
+                    if (mapLayout[endY][i] == 'V') {
+                        return new int[] {i, endY};
+                    }
+                }
+            }
+
+        }
+        return new int [] {-1, -1};
+    }
 
     public boolean IsTurnLegal(boolean isNotEnd, int x, int y, int[] shipPos, String orientation, int currentPlayer, boolean isAI) {
         if (currentPlayer == 2 && isAI) {

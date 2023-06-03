@@ -22,4 +22,8 @@ public abstract class Entity {
         this.imageView = new ImageView(this.image);
         imageView.setMouseTransparent(true);
     };
+
+    public static Image GetImageByPath(String path){
+        return new Image(Objects.requireNonNull(Entity.class.getResourceAsStream(path)));
+    };
 }

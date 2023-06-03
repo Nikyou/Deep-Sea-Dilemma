@@ -1,5 +1,6 @@
 package com.deep_sea_dilemma.levels;
 
+import com.deep_sea_dilemma.interfaces.Cosmetics;
 import com.deep_sea_dilemma.interfaces.Game;
 import com.deep_sea_dilemma.objects.Arrow;
 import javafx.animation.PauseTransition;
@@ -9,6 +10,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -16,14 +19,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Creator implements LevelsStore {
     private static Creator instance = null;
-
-    private String saveInformation;
-    private Game game = Game.Initialize();
+    private final Game game = Game.Initialize();
 
     private Creator()
     {
@@ -33,18 +37,15 @@ public class Creator implements LevelsStore {
     public Scene ChoseMode(int levelNumber) {
 
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/3, game.buttonHeight/3);
-        backButton.setStyle("-fx-font-size: 20pt;");
-        backButton.setOnAction(e -> game.window.setScene(game.mainMenu));
+        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setOnAction(e -> game.window.setScene(game.levelSelectionScene));
 
         Button CPUButton = new Button("CPU");
         CPUButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-        CPUButton.setStyle("-fx-font-size: 30pt;");
         CPUButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, true)));
 
         Button playerButton = new Button("Player");
         playerButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-        playerButton.setStyle("-fx-font-size: 30pt;");
         playerButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, false)));
 
         BorderPane root = new BorderPane();
@@ -53,11 +54,17 @@ public class Creator implements LevelsStore {
         root.setTop(backButton);
         root.setCenter(centerLayout);
         centerLayout.setAlignment(Pos.CENTER); // Center alignment for the VBox
-        centerLayout.setSpacing(10); // Space between the buttons
+        centerLayout.setSpacing(30); // Space between the buttons
         centerLayout.getChildren().addAll(CPUButton, playerButton);
 
         // Position the button
         BorderPane.setAlignment(backButton, Pos.TOP_LEFT);
+
+        // Set styles for buttons
+        backButton.getStyleClass().add("back");
+
+        // Add css file to scene
+        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
         // Create the level selection scene and return it
         return new Scene(root);
@@ -75,37 +82,35 @@ public class Creator implements LevelsStore {
         BorderPane root = new BorderPane();
         root.setCenter(grid);
 
+        //Game variable
+        AtomicBoolean canMove = new AtomicBoolean(true);
+
         //Create Back button
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/3, game.buttonHeight/3);
-        backButton.setStyle("-fx-font-size: 20pt;");
+        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
         backButton.setOnAction(e -> {
-            game.window.setScene(game.levelSelectionScene);
-            grid.getChildren().removeAll();
-
+            if (canMove.get()) {
+                game.window.setScene(game.levelSelectionScene);
+                grid.getChildren().removeAll();
+            }
         });
         BorderPane.setAlignment(backButton, Pos.TOP_LEFT);
 
         //Create label
-        Label label = new Label();
-        label.setStyle("-fx-font-size: 30pt;");
-        BorderPane.setAlignment(label, Pos.TOP_CENTER);
+        Label turnOrder = new Label();
+        BorderPane.setAlignment(turnOrder, Pos.TOP_CENTER);
 
         BorderPane topContainer = new BorderPane();
         root.setTop(topContainer);
         topContainer.setTop(backButton);
-        topContainer.setCenter(label);
-
-
+        topContainer.setCenter(turnOrder);
 
         //Game variables
         AtomicInteger currentPlayer = new AtomicInteger(1);
         AtomicBoolean isNotEnd = new AtomicBoolean(true);
-        AtomicBoolean canMove = new AtomicBoolean(true);
         int[] changeTurn = new int[] {2, 1};
-        //
 
-        label.setText(ChangeTurnString(1, isAI));
+        turnOrder.setText(ChangeTurnString(1, isAI));
 
         // Create map
         int tileSize = levelObjectSize[levelNumber];
@@ -134,7 +139,8 @@ public class Creator implements LevelsStore {
                 triangle1.setOnMouseClicked(event -> { // Left
                     if (canMove.get() &&
                             game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), "Left", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        MakeTurnPlayer(finalX, finalY, "Left", turnOrder, changeTurn, currentPlayer,
+                                isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber], levelNumber);
                         if(game.arrow.IsShown()){
                             game.arrow.Clear();
                         }
@@ -154,7 +160,8 @@ public class Creator implements LevelsStore {
                 triangle2.setOnMouseClicked(event -> { // Top
                     if (canMove.get() &&
                             game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Top", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        MakeTurnPlayer(finalX, finalY, "Top", turnOrder, changeTurn, currentPlayer,
+                                isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber], levelNumber);
                         if(game.arrow.IsShown()){
                             game.arrow.Clear();
                         }
@@ -174,7 +181,8 @@ public class Creator implements LevelsStore {
                 triangle3.setOnMouseClicked(event -> {  // Bottom
                     if (canMove.get() &&
                             game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Bottom", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        MakeTurnPlayer(finalX, finalY, "Bottom", turnOrder, changeTurn, currentPlayer,
+                                isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber], levelNumber);
                         if(game.arrow.IsShown()){
                             game.arrow.Clear();
                         }
@@ -194,7 +202,8 @@ public class Creator implements LevelsStore {
                 triangle4.setOnMouseClicked(event -> {  // Right
                     if (canMove.get() &&
                             game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),"Right", currentPlayer.get(), isAI)){
-                        MakeTurnPlayer(finalX, finalY, label, changeTurn, currentPlayer, isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber]);
+                        MakeTurnPlayer(finalX, finalY, "Right", turnOrder, changeTurn, currentPlayer,
+                                isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber], levelNumber);
                         if(game.arrow.IsShown()){
                             game.arrow.Clear();
                         }
@@ -257,6 +266,14 @@ public class Creator implements LevelsStore {
         }*/
 
 
+        // Set styles for button
+        backButton.getStyleClass().add("back");
+
+        // Set styles for label
+        turnOrder.getStyleClass().add("turn-order");
+
+        // Add css file to scene
+        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
         // Create the scene
         return new Scene(root);
@@ -265,8 +282,7 @@ public class Creator implements LevelsStore {
     public Scene createTutorialLevelScene() {
 
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/3, game.buttonHeight/3);
-        backButton.setStyle("-fx-font-size: 20pt;");
+        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
 
 
         // Create the grid
@@ -383,20 +399,18 @@ public class Creator implements LevelsStore {
             }
         }
 
+        // Set styles for buttons
+        backButton.getStyleClass().add("back");
+
+        // Add css file to scene
+        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
+
         // Create the scene
         return new Scene(root);
     }
 
-    private void ReadSave(){
-
-    }
-
-    private void SetShop(){
-
-    }
-
     public void createMainMenuScene() {
-        Button levelSelectButton = new Button("Level Select");
+        Button levelSelectButton = new Button("Select Level");
         Button shopButton = new Button("Shop");
         Button exitButton = new Button("Exit");
 
@@ -404,36 +418,35 @@ public class Creator implements LevelsStore {
         shopButton.setPrefSize(game.buttonWidth, game.buttonHeight);
         exitButton.setPrefSize(game.buttonWidth, game.buttonHeight);
 
-        levelSelectButton.setStyle("-fx-font-size: 30pt;");
-        shopButton.setStyle("-fx-font-size: 30pt;");
-        exitButton.setStyle("-fx-font-size: 30pt;");
 
         // Add functionality to the buttons
         levelSelectButton.setOnAction(e -> game.window.setScene(game.levelSelectionScene));
 
-        shopButton.setOnAction(e -> {
-
-        });
+        shopButton.setOnAction(e ->  game.window.setScene(createShop()));
 
         exitButton.setOnAction(e -> {
+            game.Save();
             game.window.close(); // Close the application
         });
 
         //Create label
-        Label label = new Label("Deep Sea Dilemma");
-        label.setStyle("-fx-font-size: 60pt;");
-        BorderPane.setAlignment(label, Pos.CENTER);
+        Label mainMenuLabel = new Label("Deep Sea Dilemma");
+        mainMenuLabel.getStyleClass().add("menu-title");
+        BorderPane.setAlignment(mainMenuLabel, Pos.CENTER);
 
         // Create the main menu layout
-        VBox mainMenuLayout = new VBox(20); // 20 is the spacing between elements
+        VBox mainMenuLayout = new VBox(40); // 40 is the spacing between elements
         mainMenuLayout.setAlignment(Pos.CENTER);
         mainMenuLayout.getChildren().addAll(levelSelectButton, shopButton, exitButton);
 
         BorderPane root = new BorderPane();
         BorderPane topBar = new BorderPane();
         root.setTop(topBar);
-        topBar.setBottom(label);
+        topBar.setBottom(mainMenuLabel);
         root.setCenter(mainMenuLayout);
+
+        // Add css file to scene
+        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
         // Create the scene and set it as the primary stage's scene
         game.mainMenu = new Scene(root);
@@ -442,15 +455,8 @@ public class Creator implements LevelsStore {
 
     public void createLevelSelectionScene() {
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/3, game.buttonHeight/3);
-        backButton.setStyle("-fx-font-size: 20pt;");
+        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
         backButton.setOnAction(e -> game.window.setScene(game.mainMenu));
-
-        Button centerButton = new Button("Center Button");
-        centerButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-        centerButton.setStyle("-fx-font-size: 30pt;");
-        centerButton.setOnAction(e -> game.window.setScene(ChoseMode(1)));
-
 
         BorderPane root = new BorderPane();
         // Create the grid
@@ -467,7 +473,6 @@ public class Creator implements LevelsStore {
                 // Create the level button
                 Button levelButton = new Button("Level " + i);
                 levelButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-                levelButton.setStyle("-fx-font-size: 30pt;");
 
                 // Add an action to the button
                 int finalI = i;
@@ -481,7 +486,6 @@ public class Creator implements LevelsStore {
         // Create tutorial button
         Button tutorialButton = new Button("Tutorial");
         tutorialButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-        tutorialButton.setStyle("-fx-font-size: 30pt;");
         tutorialButton.setOnAction(e -> game.window.setScene(createTutorialLevelScene()));
         grid.add(tutorialButton, 1, 3);
 
@@ -492,9 +496,187 @@ public class Creator implements LevelsStore {
         // Position the back button
         BorderPane.setAlignment(backButton, Pos.TOP_LEFT);
 
+        // Set styles for buttons
+        backButton.getStyleClass().add("back");
+
+        // Add css file to scene
+        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
+
         // Create the scene
         game.levelSelectionScene = new Scene(root);
 
+    }
+
+    public Scene createShop(){
+        // Create the grid
+        GridPane grid = new GridPane();
+        grid.setMinSize(6,7);
+        grid.setPadding(new Insets(0));
+        grid.setHgap(20);
+        grid.setVgap(20);
+        grid.setAlignment(Pos.CENTER);
+
+        // Create the border pane
+        BorderPane root = new BorderPane();
+        root.setCenter(grid);
+
+        //Create Back button
+        Button backButton = new Button("Back");
+        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setOnAction(e -> {
+            game.window.setScene(game.mainMenu);
+            grid.getChildren().removeAll();
+
+        });
+        BorderPane.setAlignment(backButton, Pos.TOP_LEFT);
+
+        //Create labels
+        Label titleLabel = new Label("Shop");
+        BorderPane.setAlignment(titleLabel, Pos.TOP_CENTER);
+
+        Label goldLabel = new Label(game.settings.gold + " Gold");
+        BorderPane.setAlignment(goldLabel, Pos.TOP_CENTER);
+
+        BorderPane topContainer = new BorderPane();
+        root.setTop(topContainer);
+        topContainer.setTop(backButton);
+        topContainer.setCenter(titleLabel);
+        topContainer.setRight(goldLabel);
+
+
+        //Create labels for shop
+        List<Label> itemNames = new ArrayList<>();
+        Label labelShip = new Label("Ship");
+        labelShip.setAlignment(Pos.CENTER);
+        itemNames.add(labelShip);
+
+        Label labelTile = new Label("Tile");
+        labelTile.setAlignment(Pos.CENTER);
+        itemNames.add(labelTile);
+
+        Label labelGoal = new Label("Goal");
+        labelGoal.setAlignment(Pos.CENTER);
+        itemNames.add(labelGoal);
+
+        Label labelVortex = new Label("Vortex");
+        labelVortex.setAlignment(Pos.CENTER);
+        itemNames.add(labelVortex);
+
+        Label labelRock = new Label("Rock");
+        labelRock.setAlignment(Pos.CENTER);
+        itemNames.add(labelRock);
+
+        for (int x = 1; x <=5; x++){
+            grid.add(itemNames.get(x-1), x, 0);
+        }
+
+        //Prices
+        Label price1Row = new Label(Integer.toString(game.settings.cosmeticsPrice[1]));
+        grid.add(price1Row, 0, 4);
+        Label price2Row = new Label(Integer.toString(game.settings.cosmeticsPrice[2]));
+        grid.add(price2Row, 0, 6);
+
+        int tileSize = 150;
+        //Ship images
+        AddShopImages(grid, game.settings.imageShips, tileSize, 1);
+        //Tile images
+        AddShopImages(grid, game.settings.imageTiles, tileSize, 2);
+        //Goal images
+        AddShopImages(grid, game.settings.imageGoals, tileSize, 3);
+        //Vortex images
+        AddShopImages(grid, game.settings.imageVortices, tileSize, 4);
+        //Rock images
+        AddShopImages(grid, game.settings.imageRocks, tileSize, 5);
+
+        // Create buy buttons
+        for (int x = 1; x <=5; x++){
+            int y = 2;
+            for (int i = 0; i <3; i++){
+                Button button = new Button("Buy");
+                button.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+                button.getStyleClass().add("shop");
+                grid.add(button, x, y);
+                y = y+2;
+
+                int finalX = x-1;
+                int finalI = i;
+                switch (finalX){
+                    case 0 -> {
+                        if (game.settings.unlockedShips[i]){
+                            button.setText("Select");
+                        }
+                        if (i == game.settings.selectedCosmetic[finalX]){
+                            button.setText("Selected");
+                        }
+                    }
+                    case 1 -> {
+                        if (game.settings.unlockedTiles[i]){
+                            button.setText("Select");
+                        }
+                        if (i == game.settings.selectedCosmetic[finalX]){
+                            button.setText("Selected");
+                        }
+                    }
+                    case 2 -> {
+                        if (game.settings.unlockedGoals[i]){
+                            button.setText("Select");
+                        }
+                        if (i == game.settings.selectedCosmetic[finalX]){
+                            button.setText("Selected");
+                        }
+                    }
+                    case 3 -> {
+                        if (game.settings.unlockedVortices[i]){
+                            button.setText("Select");
+                        }
+                        if (i == game.settings.selectedCosmetic[finalX]){
+                            button.setText("Selected");
+                        }
+                    }
+                    case 4 -> {
+                        if (game.settings.unlockedRocks[i]){
+                            button.setText("Select");
+                        }
+                        if (i == game.settings.selectedCosmetic[finalX]){
+                            button.setText("Selected");
+                        }
+                    }
+                }
+                button.setOnAction(e -> {
+                    boolean change = false;
+                    if (button.getText().equals("Select")){
+                        Cosmetics.SelectCosmetic(finalX, finalI);
+                        change = true;
+                    }
+                    if (button.getText().equals("Buy") && Cosmetics.IsEnoughGold(finalI)){
+                        Cosmetics.UnlockCosmetic(finalX, finalI);
+                        change = true;
+                    }
+                    if (change) {
+                        game.window.setScene(createShop());
+                    }
+                });
+            }
+        }
+
+
+        // Set styles for buttons
+        backButton.getStyleClass().add("back");
+
+        // Set styles for labels
+        price1Row.getStyleClass().add("shop-price");
+        price2Row.getStyleClass().add("shop-price");
+        titleLabel.getStyleClass().add("shop-title");
+        goldLabel.getStyleClass().add("shop-gold-counter");
+        for (int x = 0; x <5; x++){
+            itemNames.get(x).getStyleClass().add("shop-item");
+        }
+
+        // Add css file to scene
+        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
+
+        // Create the scene
+        return new Scene(root);
     }
 
     //In level methods
@@ -505,10 +687,11 @@ public class Creator implements LevelsStore {
         if ((Math.abs(goalPos[0] - shipPos[0]) + Math.abs(goalPos[1] - shipPos[1]) == 1)) {return 2;} //True, next player lost
         return 0; //false
     }
-    private String WhoWonString(int playerNumber, boolean IsAI){
+    private String WhoWonString(int playerNumber, boolean IsAI, int levelNumber){
         switch (playerNumber){
             case 1 -> {
                 if (IsAI){
+                    game.saver.EndLevelSave(levelNumber);
                     return "You win!";
                 }else{
                     return "Player 1 won!";
@@ -548,16 +731,21 @@ public class Creator implements LevelsStore {
         }
     }
 
-    private void MakeTurnPlayer(int finalX, int finalY, Label label, int[] changeTurn, AtomicInteger currentPlayer,
-                                AtomicBoolean isNotEnd, AtomicBoolean canMove, boolean isAI, int AIDifficulty){
+    private void MakeTurnPlayer(int finalX, int finalY, String orientation, Label label, int[] changeTurn, AtomicInteger currentPlayer,
+                                AtomicBoolean isNotEnd, AtomicBoolean canMove, boolean isAI, int AIDifficulty, int levelNumber){
+        int[] tempcord = game.pathfinder.GetVortexPosition(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, orientation);
+        if (tempcord[0] != -1){
+            finalX = tempcord[0];
+            finalY = tempcord[1];
+        }
         game.DrawShip(finalX, finalY);
         switch (IsEnd()){
             case 1 -> {
-                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI));
+                label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], isAI, levelNumber));
                 isNotEnd.set(false);
             }
             case 2 -> {
-                label.setText(WhoWonString(currentPlayer.get(), isAI));
+                label.setText(WhoWonString(currentPlayer.get(), isAI, levelNumber));
                 isNotEnd.set(false);
             }
             default -> {
@@ -565,14 +753,14 @@ public class Creator implements LevelsStore {
                 label.setText(ChangeTurnString(currentPlayer.get(), isAI));
                 if (isAI){
                     canMove.set(false);
-                    MakeTurnAI(label,  changeTurn,  currentPlayer,  isNotEnd, canMove, AIDifficulty);
+                    MakeTurnAI(label,  changeTurn,  currentPlayer,  isNotEnd, canMove, AIDifficulty, levelNumber);
                 }
             }
         }
     }
 
     private void MakeTurnAI(Label label, int[] changeTurn, AtomicInteger currentPlayer, AtomicBoolean isNotEnd,
-                            AtomicBoolean canMove, int AIDifficulty){
+                            AtomicBoolean canMove, int AIDifficulty, int levelNumber){
         int[] cord = game.AIMakeTurn(AIDifficulty);
 
         if (game.arrow.IsShown()) {
@@ -592,23 +780,30 @@ public class Creator implements LevelsStore {
             orientation = "Bottom";
         }
 
-        // Delay for 2 seconds
+        // Delay
         PauseTransition delay1 = new PauseTransition(Duration.seconds(1));
         PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
 
+        String finalOrientation = orientation;
         delay2.setOnFinished(event -> {
             // Code to be executed after the delay
+            int[] tempcord = game.pathfinder.GetVortexPosition(game.ship.GetPosition()[0], game.ship.GetPosition()[1], cord[0], cord[1], finalOrientation);
+            if (tempcord[0] != -1){
+                cord[0] = tempcord[0];
+                cord[1] = tempcord[1];
+            }
+
             game.DrawShip(cord[0], cord[1]);
             game.arrow.Clear();
             canMove.set(true);
 
             switch (IsEnd()){
                 case 1 -> {
-                    label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], true));
+                    label.setText(WhoWonString(changeTurn[currentPlayer.get()-1], true, levelNumber));
                     isNotEnd.set(false);
                 }
                 case 2 -> {
-                    label.setText(WhoWonString(currentPlayer.get(), true));
+                    label.setText(WhoWonString(currentPlayer.get(), true, levelNumber));
                     isNotEnd.set(false);
                 }
                 default -> {
@@ -618,7 +813,6 @@ public class Creator implements LevelsStore {
             }
         });
 
-        String finalOrientation = orientation;
         delay1.setOnFinished(event -> {
             // Code to be executed after the delay
             game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], cord[0], cord[1], finalOrientation);
@@ -626,6 +820,19 @@ public class Creator implements LevelsStore {
         });
 
         delay1.play();
+
+    }
+
+    private void AddShopImages(GridPane grid, Image[] images, int tileSize, int x){
+        int i = 0;
+        for (int y = 1; y<=5; y = y+ 2){
+            ImageView imageView = new ImageView(images[i]);
+            imageView.setFitWidth(tileSize);
+            imageView.setFitHeight(tileSize);
+            imageView.setMouseTransparent(false);
+            grid.add(imageView, x, y);
+            i++;
+        }
 
     }
 

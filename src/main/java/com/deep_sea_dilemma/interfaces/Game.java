@@ -1,6 +1,8 @@
 package com.deep_sea_dilemma.interfaces;
 
 import com.deep_sea_dilemma.objects.*;
+import com.deep_sea_dilemma.settings.Saver;
+import com.deep_sea_dilemma.settings.Settings;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
@@ -16,17 +18,25 @@ public class Game {
     public Vortex vortex = new Vortex();
     public Arrow arrow;
     public Pathfinder pathfinder = Pathfinder.Initialize();
+    public Settings settings = Settings.Initialize();
+    public Saver saver = Saver.Initialize();
+
 
     public int buttonWidth = 300;
-    public int buttonHeight = 100;
+    public int buttonHeight = 96;
 
     public Stage window = null;
     public Scene mainMenu = null;
     public Scene levelSelectionScene = null;
 
-    private Game()
-    {
 
+
+    private Game(){
+    }
+
+
+    public void InitializeCosmetic(){
+        Cosmetics.InitializeCosmetic();
     }
 
     public void DrawTile (int x, int y, int width, int height, GridPane grid){
@@ -52,13 +62,17 @@ public class Game {
         return ship.AIMakeTurn(difficulty);
     }
 
+    public void Save(){
+        saver.SaveFile();
+    }
+
     // Static method to create instance of Initializer class
     public static Game Initialize()
     {
         // To ensure only one instance is created
-        if (instance == null)
+        if (instance == null) {
             instance = new Game();
-
+        }
         return instance;
     }
 }

@@ -17,16 +17,12 @@ public interface LevelsStore {
             },
             // 1 level
             {
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'S'},
-                    {'T', 'T', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'R', 'T', 'T', 'T', 'T', 'T', 'R', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'R'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'G', 'T', 'V', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'R', 'T', 'T', 'T', 'T', 'S'},
+                    {'T', 'T', 'T', 'R', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'V', 'T'},
+                    {'V', 'T', 'R', 'T', 'T', 'T'},
+                    {'T', 'G', 'T', 'V', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T'},
             },
             // 2 level
             {
@@ -72,7 +68,7 @@ public interface LevelsStore {
             // 0 level
             {10, 10},
             // 1 level
-            {10, 10},
+            {6, 6},
             // 2 level
             {10, 10},
             // 3 level
@@ -85,7 +81,7 @@ public interface LevelsStore {
             // 0 level
             80,
             // 1 level
-            80,
+            100,
             // 2 level
             80,
             // 3 level
@@ -148,5 +144,27 @@ public interface LevelsStore {
             3,
             // 9 level
             3,
+    };
+    int [] goldPerLevel = {
+            // 0 level
+            0,
+            // 1 level
+            1,
+            // 2 level
+            1,
+            // 3 level
+            1,
+            // 4 level
+            2,
+            // 5 level
+            2,
+            // 6 level
+            2,
+            // 7 level
+            3,
+            // 8 level
+            3,
+            // 9 level
+            5,
     };
 }
