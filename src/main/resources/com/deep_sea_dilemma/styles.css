@@ -88,10 +88,13 @@
     -fx-pref-height: 48px;
 }
 .label.tutorial {
+    -fx-background-image: url("./css/wood_sign_vertical.png");
     -fx-word-wrap: normal;
     -fx-font-size: 30px;
-    -fx-pref-width: 400px;
-    -fx-pref-height: 600px;
+    -fx-pref-width: 420px;
+    -fx-pref-height: 625px;
     -fx-background-size: stretch;
-    -fx-padding: 20px;
+    -fx-padding: 40px, 15px, 0px, 30px;
+    -fx-alignment: top-left;
+    -fx-line-height: normal;
 }

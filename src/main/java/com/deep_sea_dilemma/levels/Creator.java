@@ -11,10 +11,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import javafx.scene.control.Label;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -34,15 +37,15 @@ public class Creator implements LevelsStore {
     public Scene ChoseMode(int levelNumber) {
 
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> game.window.setScene(createLevelSelectionScene()));
 
         Button CPUButton = new Button("CPU");
-        CPUButton.setPrefSize(game.buttonWidth, game.buttonHeight);
+        CPUButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
         CPUButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, true)));
 
         Button playerButton = new Button("Player");
-        playerButton.setPrefSize(game.buttonWidth, game.buttonHeight);
+        playerButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
         playerButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, false)));
 
         BorderPane root = new BorderPane();
@@ -99,7 +102,7 @@ public class Creator implements LevelsStore {
 
         //Create Back button
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> {
             if (canMove.get()) {
                 game.window.setScene(createLevelSelectionScene());
@@ -132,7 +135,7 @@ public class Creator implements LevelsStore {
         //Game variables
         AtomicInteger currentPlayer = new AtomicInteger(1);
         AtomicBoolean isNotEnd = new AtomicBoolean(true);
-        int[] changeTurn = new int[] {2, 1};
+        final int[] changeTurn = new int[] {2, 1};
         turnOrder.setText(ChangeTurnString(1, isAI));
 
         // Create map
@@ -253,6 +256,10 @@ public class Creator implements LevelsStore {
 
     public Scene createTutorialLevelScene() {
 
+        String text0 = "Welcome to the game. Your goal is to make the other player get to the treasure first, however, you have to get closer to it each turn. You can see your speed in top right corner. Try to get to the marked square. Notice that you can move first horizontally or vertically.";
+        String text1 = "As you saw, your opponent tried to move to a different square but was caught in a vortex. Vortices stop your ship if they are in your path. Now move to the marked square. Notice the rock blocking your path from one direction.";
+        String text2 = "Your opponent reached the treasure and thus you won! Generally, you want to stop on squares that are adjacent to the goal to force your opponent to move into the goal. After completing each level once against CPU, you earn gold that can be spent in the shop.\nGood luck!";
+
         // Create the stack pane
         StackPane root = new StackPane();
 
@@ -279,7 +286,7 @@ public class Creator implements LevelsStore {
 
         //Create Back button
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> {
             if (canMove.get()) {
                 game.window.setScene(createLevelSelectionScene());
@@ -296,7 +303,7 @@ public class Creator implements LevelsStore {
 
         Label speedLabel = new Label("Speed: " + LevelsStore.levelShipSpeed[0]);
 
-        Label tutorialLabel = new Label("The missile knows where it is at all times. It knows this because it knows where it isn't. By subtracting where it is from where it isn't, or where it isn't from where it is (whichever is greater), it obtains a difference, or deviation.");
+        Label tutorialLabel = new Label(text0);
         tutorialLabel.setWrapText(true);
 
         // Create top container
@@ -320,21 +327,205 @@ public class Creator implements LevelsStore {
         topContainer.setRight(topRightContainer);
 
         //Game variables
-        AtomicInteger currentPlayer = new AtomicInteger(1);
-        AtomicBoolean isNotEnd = new AtomicBoolean(true);
-        int[] changeTurn = new int[] {2, 1};
-        turnOrder.setText(ChangeTurnString(1, true));
+        turnOrder.setText("Your turn");
 
         // Create map
         int tileSize = levelObjectSize[0];
         double halfTileSize = tileSize / 2;
-        grid.setPadding(new Insets(0, tileSize + halfTileSize, 0 , 0));
+
+        // Border glow effect
+        DropShadow borderGlow= new DropShadow();
+        borderGlow.setColor(Color.YELLOW);
+        borderGlow.setOffsetY(0f);
+        borderGlow.setOffsetX(0f);
+        borderGlow.setWidth(70);
+        borderGlow.setHeight(70);
+        speedLabel.setEffect(borderGlow);
+
         // Create arrow
         game.arrow = new Arrow(grid,tileSize);
 
+        List<Rectangle> glowContainer = new ArrayList<>();
+
         // Populate the grid with squares
-        for (int y = 0; y < LevelsStore.levelMapSize[0][0]; y++) {
+        for (int y = LevelsStore.levelMapSize[0][0]-1; y >=0 ; y--) {
             for (int x = 0; x < LevelsStore.levelMapSize[0][1]; x++) {
+                if ((x ==5 && y == 1) ||
+                        (x == 3 && y == 4)
+                ){
+                    // Create the four triangles that form the rectangle
+                    Polygon triangle1 = new Polygon(0, 0, 0, tileSize, halfTileSize, halfTileSize); // Left
+                    Polygon triangle2 = new Polygon(tileSize, 0, 0, 0, halfTileSize, halfTileSize); // Top
+                    Polygon triangle3 = new Polygon(tileSize, tileSize, 0, tileSize, halfTileSize, halfTileSize);   // Bottom
+                    Polygon triangle4 = new Polygon(tileSize, tileSize, tileSize, 0, halfTileSize, halfTileSize);   // Right
+
+                    List<Polygon> buttons = new ArrayList<>();
+                    buttons.add(triangle1);
+                    buttons.add(triangle2);
+                    buttons.add(triangle3);
+                    buttons.add(triangle4);
+
+                    if (x == 5){
+
+                        Rectangle rectangle = new Rectangle(tileSize-2, tileSize-2);
+                        rectangle.setMouseTransparent(true);
+                        rectangle.setFill(Color.TRANSPARENT);
+                        rectangle.setStroke(Color.YELLOW);
+                        rectangle.setStrokeWidth(1);
+                        glowContainer.add(rectangle);
+
+                        grid.add(rectangle, 5, 1);
+
+                        // Add a mouse click event to each triangle
+                        for (int i = 0; i<4; i++){
+                            String orient = "Left";
+                            switch (i){
+                                case 0 -> orient = "Left";
+                                case 1 -> orient = "Top";
+                                case 2 -> orient = "Bottom";
+                                case 3 -> orient = "Right";
+                            }
+
+                            String finalOrient = orient;
+                            buttons.get(i).setOnMouseClicked(event -> {
+                                if (canMove.get() && game.pathfinder.IsPathOk(5, 1, game.ship.GetPosition(), finalOrient)){
+                                    canMove.set(false);
+                                    speedLabel.setEffect(null);
+                                    rectangle.toBack();
+                                    game.DrawShip(5, 1);
+
+                                    turnOrder.setText("CPU turn");
+                                    // Delay
+                                    PauseTransition delay1 = new PauseTransition(Duration.seconds(1));
+                                    PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
+
+                                    delay2.setOnFinished(e -> {
+                                        // Code to be executed after the delay
+
+                                        game.DrawShip(4, 2);
+                                        game.arrow.Clear();
+                                        canMove.set(true);
+                                        turnOrder.setText("Your turn");
+                                        tutorialLabel.setText(text1);
+                                        glowContainer.get(0).toFront();
+
+                                    });
+
+                                    delay1.setOnFinished(e -> {
+                                        // Code to be executed after the delay
+                                        game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], 3, 2, "Right");
+                                        delay2.play();
+                                    });
+
+                                    delay1.play();
+
+                                    if(game.arrow.IsShown()){
+                                        game.arrow.Clear();
+                                    }
+                                }
+                            });
+                            buttons.get(i).setOnMouseEntered(event -> {
+                                if (canMove.get()){
+                                    if(game.arrow.IsShown()){
+                                        game.arrow.Clear();
+                                    }
+                                    if(!game.arrow.IsShown() && game.pathfinder.IsPathOk(5, 1, game.ship.GetPosition(), finalOrient)){
+                                        game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], 5, 1, finalOrient);
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+                    if (x == 3){
+
+                        Rectangle rectangle = new Rectangle(tileSize-2, tileSize-2);
+                        rectangle.setMouseTransparent(true);
+                        rectangle.setFill(Color.TRANSPARENT);
+                        rectangle.setStroke(Color.YELLOW);
+                        rectangle.setStrokeWidth(1);
+                        glowContainer.add(rectangle);
+
+                        grid.add(rectangle, 3, 4);
+
+                        // Add a mouse click event to each triangle
+                        for (int i = 0; i<4; i++){
+                            String orient = "Left";
+                            switch (i){
+                                case 0 -> orient = "Left";
+                                case 1 -> orient = "Top";
+                                case 2 -> orient = "Bottom";
+                                case 3 -> orient = "Right";
+                            }
+
+                            String finalOrient = orient;
+                            buttons.get(i).setOnMouseClicked(event -> {
+                                if (canMove.get() && game.pathfinder.IsPathOk(3, 4, game.ship.GetPosition(), finalOrient)){
+                                    canMove.set(false);
+                                    rectangle.toBack();
+                                    game.DrawShip(3, 4);
+
+                                    turnOrder.setText("CPU turn");
+                                    // Delay
+                                    PauseTransition delay1 = new PauseTransition(Duration.seconds(1));
+                                    PauseTransition delay2 = new PauseTransition(Duration.seconds(3));
+
+                                    delay2.setOnFinished(e -> {
+                                        // Code to be executed after the delay
+
+                                        game.DrawShip(1, 5);
+                                        game.arrow.Clear();
+                                        canMove.set(true);
+                                        turnOrder.setText("You win!");
+                                        tutorialLabel.setText(text2);
+                                        goldLabel.setEffect(borderGlow);
+
+                                        game.saver.EndLevelSave(0);
+                                    });
+
+                                    delay1.setOnFinished(e -> {
+                                        // Code to be executed after the delay
+                                        game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], 1, 5, "Top");
+                                        delay2.play();
+                                    });
+
+                                    delay1.play();
+
+                                    if(game.arrow.IsShown()){
+                                        game.arrow.Clear();
+                                    }
+                                }
+                            });
+                            buttons.get(i).setOnMouseEntered(event -> {
+                                if (canMove.get()){
+                                    if(game.arrow.IsShown()){
+                                        game.arrow.Clear();
+                                    }
+                                    if(!game.arrow.IsShown() && game.pathfinder.IsPathOk(3, 4, game.ship.GetPosition(), finalOrient)){
+                                        game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], 3, 4, finalOrient);
+                                    }
+                                }
+                            });
+                        }
+                    }
+
+
+
+                    // Add the four triangles to the grid
+                    for (int i = 0; i < 4; i++) {
+                        grid.add(buttons.get(i), x, y);
+                    }
+
+                    // Set the position of each triangle to form the rectangle
+                    triangle1.setTranslateX(triangle1.getTranslateX());
+                    triangle1.setTranslateY(triangle1.getTranslateY());
+                    triangle2.setTranslateX(triangle2.getTranslateX());
+                    triangle2.setTranslateY(triangle2.getTranslateY() - halfTileSize/2);
+                    triangle3.setTranslateX(triangle3.getTranslateX());
+                    triangle3.setTranslateY(triangle3.getTranslateY() + halfTileSize/2);
+                    triangle4.setTranslateX(triangle4.getTranslateX() + halfTileSize);
+                    triangle4.setTranslateY(triangle4.getTranslateY());
+                }
 
                 game.DrawTile(x, y, tileSize, tileSize, grid);
 
@@ -347,13 +538,10 @@ public class Creator implements LevelsStore {
             }
         }
 
-        //DEBUGGING
-        /*for (int i = 0; i < game.pathfinder.winPositions.size(); i++){
-            int [] cord = game.pathfinder.winPositions.get(i);
-            Rectangle rectangle = new Rectangle(halfTileSize, halfTileSize);
-            rectangle.setFill(Color.GREEN);
-            grid.add(rectangle, cord[0], cord[1]);
-        }*/
+        glowContainer.get(1).toFront();
+
+        //Initialize pathfinding
+        game.pathfinder.Initialize(LevelsStore.levelMap[0], LevelsStore.levelShipSpeed[0], LevelsStore.levelMapSize[0], game.goal.GetPosition());
 
         // Set styles for button
         backButton.getStyleClass().add("back");
@@ -393,9 +581,9 @@ public class Creator implements LevelsStore {
         Button shopButton = new Button("Shop");
         Button exitButton = new Button("Exit");
 
-        levelSelectButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-        shopButton.setPrefSize(game.buttonWidth, game.buttonHeight);
-        exitButton.setPrefSize(game.buttonWidth, game.buttonHeight);
+        levelSelectButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
+        shopButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
+        exitButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
 
 
         // Add functionality to the buttons
@@ -430,7 +618,7 @@ public class Creator implements LevelsStore {
 
     public Scene createLevelSelectionScene() {
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> game.window.setScene(game.mainMenu));
 
         BorderPane root = new BorderPane();
@@ -448,7 +636,7 @@ public class Creator implements LevelsStore {
                 i++;
                 // Create the level button
                 Button levelButton = new Button("Level " + i);
-                levelButton.setPrefSize(game.buttonWidth, game.buttonHeight);
+                levelButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
 
                 // Add an action to the button
                 int finalI = i;
@@ -465,9 +653,21 @@ public class Creator implements LevelsStore {
 
         // Create tutorial button
         Button tutorialButton = new Button("Tutorial");
-        tutorialButton.setPrefSize(game.buttonWidth, game.buttonHeight);
+        tutorialButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
         tutorialButton.setOnAction(e -> game.window.setScene(createTutorialLevelScene()));
         grid.add(tutorialButton, 1, 3);
+
+        if (!game.settings.GetCompletedLevels()[0]){
+            // Border glow effect
+            DropShadow borderGlow= new DropShadow();
+            borderGlow.setColor(Color.YELLOW);
+            borderGlow.setOffsetY(0f);
+            borderGlow.setOffsetX(0f);
+            borderGlow.setWidth(70);
+            borderGlow.setHeight(70);
+            tutorialButton.setEffect(borderGlow);
+        }
+
 
         BorderPane topContainer = new BorderPane();
         topContainer.setPadding(new Insets(20));
@@ -503,7 +703,7 @@ public class Creator implements LevelsStore {
 
         //Create Back button
         Button backButton = new Button("Back");
-        backButton.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+        backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> {
             game.window.setScene(game.mainMenu);
             grid.getChildren().removeAll();
@@ -569,7 +769,7 @@ public class Creator implements LevelsStore {
             int y = 2;
             for (int i = 0; i <3; i++){
                 Button button = new Button("Buy");
-                button.setPrefSize(game.buttonWidth/2, game.buttonHeight/2);
+                button.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
                 button.getStyleClass().add("shop");
                 grid.add(button, x, y);
                 y = y+2;
@@ -815,84 +1015,6 @@ public class Creator implements LevelsStore {
             i++;
         }
 
-    }
-
-    private void CreateTutorialButtons(GridPane grid, int tileSize, int halfTileSize){/*
-        for (int y = 0; y < LevelsStore.levelMapSize[0][0]; y++) {
-            for (int x = 0; x < LevelsStore.levelMapSize[0][1]; x++) {
-                // Create the four triangles that form the rectangle
-                Polygon triangle1 = new Polygon(0, 0, 0, tileSize, halfTileSize, halfTileSize); // Left
-                Polygon triangle2 = new Polygon(tileSize, 0, 0, 0, halfTileSize, halfTileSize); // Top
-                Polygon triangle3 = new Polygon(tileSize, tileSize, 0, tileSize, halfTileSize, halfTileSize);   // Bottom
-                Polygon triangle4 = new Polygon(tileSize, tileSize, tileSize, 0, halfTileSize, halfTileSize);   // Right
-
-                List<Polygon> buttons = new ArrayList<>();
-                buttons.add(triangle1);
-                buttons.add(triangle2);
-                buttons.add(triangle3);
-                buttons.add(triangle4);
-
-                // Add a mouse click event to each triangle
-                int finalX = x;
-                int finalY = y;
-                for (int i = 0; i<4; i++){
-                    String orient = "Left";
-                    switch (i){
-                        case 0 -> orient = "Left";
-                        case 1 -> orient = "Top";
-                        case 2 -> orient = "Bottom";
-                        case 3 -> orient = "Right";
-                    }
-
-                    String finalOrient = orient;
-                    buttons.get(i).setOnMouseClicked(event -> {
-                        if (canMove.get() &&
-                                game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(), finalOrient, currentPlayer.get(), isAI)){
-                            MakeTurnPlayer(finalX, finalY, finalOrient, turnOrder, changeTurn, currentPlayer,
-                                    isNotEnd, canMove, isAI, LevelsStore.levelAIDifficulty[levelNumber], levelNumber);
-                            if(game.arrow.IsShown()){
-                                game.arrow.Clear();
-                            }
-                            goldLabel.setText(game.settings.gold + " Gold");
-                        }
-                    });
-                    buttons.get(i).setOnMouseEntered(event -> {
-                        if (canMove.get()){
-                            if(game.arrow.IsShown()){
-                                game.arrow.Clear();
-                            }
-                            if(!game.arrow.IsShown() && game.pathfinder.IsTurnLegal(isNotEnd.get(), finalX, finalY, game.ship.GetPosition(),finalOrient, currentPlayer.get(), isAI)){
-                                game.arrow.Draw(game.ship.GetPosition()[0], game.ship.GetPosition()[1], finalX, finalY, finalOrient);
-                            }
-                        }
-                    });
-                }
-
-                // Add the four triangles to the grid
-                for (int i = 0; i < 4; i++) {
-                    grid.add(buttons.get(i), x, y);
-                }
-
-                // Set the position of each triangle to form the rectangle
-                triangle1.setTranslateX(triangle1.getTranslateX());
-                triangle1.setTranslateY(triangle1.getTranslateY());
-                triangle2.setTranslateX(triangle2.getTranslateX());
-                triangle2.setTranslateY(triangle2.getTranslateY() - halfTileSize/2);
-                triangle3.setTranslateX(triangle3.getTranslateX());
-                triangle3.setTranslateY(triangle3.getTranslateY() + halfTileSize/2);
-                triangle4.setTranslateX(triangle4.getTranslateX() + halfTileSize);
-                triangle4.setTranslateY(triangle4.getTranslateY());
-
-                game.DrawTile(x, y, tileSize, tileSize, grid);
-
-                switch (LevelsStore.levelMap[0][y][x]){
-                    case 'S' -> game.DrawShip(x, y, tileSize, tileSize, grid);
-                    case 'G' -> game.DrawGoal(x, y, tileSize, tileSize, grid);
-                    case 'R' -> game.DrawRock(x, y, tileSize, tileSize, grid);
-                    case 'V' -> game.DrawVortex(x, y, tileSize, tileSize, grid);
-                }
-            }
-        }*/
     }
 
 

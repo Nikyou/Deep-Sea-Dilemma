@@ -22,8 +22,17 @@ public class Game {
     public Saver saver = Saver.Initialize();
 
 
-    public int buttonWidth = 300;
-    public int buttonHeight = 96;
+    private final double buttonWidth = 300;
+    public double getButtonWidth() {
+        return buttonWidth;
+    }
+
+    private final double buttonHeight = 96;
+    public double getButtonHeight() {
+        return buttonHeight;
+    }
+
+
 
     public Stage window = null;
     public Scene mainMenu = null;
