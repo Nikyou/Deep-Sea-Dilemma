@@ -26,6 +26,9 @@ public class Cosmetics {
     public static boolean IsEnoughGold(int i) {
         return game.settings.gold >= game.settings.cosmeticsPrice[i];
     }
+    public static void AddGold(int i){
+        game.settings.gold = game.settings.gold + i;
+    }
     public static void UnlockCosmetic(int x, int i) {
         game.settings.gold = game.settings.gold - game.settings.cosmeticsPrice[i];
         switch (x) {

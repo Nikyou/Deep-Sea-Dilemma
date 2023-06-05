@@ -137,6 +137,10 @@ public class Settings {
     };
 
 
+    public boolean [] GetCompletedLevels(){
+        return completedLevels;
+    }
+
     private Settings()
     {
     }

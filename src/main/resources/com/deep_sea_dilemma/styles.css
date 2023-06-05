@@ -3,7 +3,7 @@
     -fx-background-radius: 0; /* Remove rounded corners */
     -fx-border-color: transparent; /* Transparent border */
     -fx-padding: 0; /* Remove padding */
-    -fx-background-image: url("./wood_button.png"); /* Background image */
+    -fx-background-image: url("./css/wood_button.png"); /* Background image */
     -fx-background-size: cover;
     -fx-text-fill: #FBF6E9; /* Text color */
     -fx-font-family: "Friz Quadrata", sans-serif; /* Font family */
@@ -16,7 +16,7 @@
 }
 
 .button:pressed {
-    -fx-background-image: url("./wood_button_pressed.png"); /* Darker background image */
+    -fx-background-image: url("./css/wood_button_pressed.png"); /* Darker background image */
 }
 
 .button.back {
@@ -28,9 +28,13 @@
     -fx-background-size: stretch;
 }
 
+.button.completed {
+    -fx-background-image: url("./css/wood_button_pressed.png"); /* Darker background image */
+}
+
 .label {
     -fx-font-family: "Friz Quadrata", sans-serif;
-    -fx-background-image: url("./wood_sign.png");
+    -fx-background-image: url("./css/wood_sign.png");
     -fx-background-size: cover;
     -fx-alignment: center;
     -fx-text-fill: #FBF6E9;
@@ -51,7 +55,7 @@
 }
 
 .label.shop-price {
-    -fx-background-image: url("./gold_coin.png");
+    -fx-background-image: url("./css/gold_coin.png");
     -fx-text-fill: #404040;
     -fx-font-size: 32px;
     -fx-pref-width: 48px;
@@ -77,4 +81,17 @@
     -fx-font-size: 30px;
     -fx-pref-width: 150px;
     -fx-pref-height: 48px;
+}
+.label.ship-speed {
+    -fx-font-size: 30px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 48px;
+}
+.label.tutorial {
+    -fx-word-wrap: normal;
+    -fx-font-size: 30px;
+    -fx-pref-width: 400px;
+    -fx-pref-height: 600px;
+    -fx-background-size: stretch;
+    -fx-padding: 20px;
 }

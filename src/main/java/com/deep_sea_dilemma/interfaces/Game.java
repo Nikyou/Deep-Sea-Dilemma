@@ -27,7 +27,6 @@ public class Game {
 
     public Stage window = null;
     public Scene mainMenu = null;
-    public Scene levelSelectionScene = null;
 
 
 

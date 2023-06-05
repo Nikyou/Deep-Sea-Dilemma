@@ -4,16 +4,13 @@ public interface LevelsStore {
     char[][][] levelMap = {
             // 0 level
             {
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'S'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'G', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
-                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'T', 'T', 'S'},
+                    {'T', 'T', 'T', 'R', 'R', 'T', 'T', 'T'},
+                    {'R', 'T', 'T', 'T', 'V', 'T', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'R', 'T', 'T'},
+                    {'T', 'T', 'T', 'T', 'R', 'T', 'T', 'T'},
+                    {'T', 'G', 'R', 'T', 'R', 'T', 'V', 'T'},
+                    {'T', 'T', 'T', 'T', 'T', 'V', 'T', 'T'},
             },
             // 1 level
             {
@@ -66,7 +63,7 @@ public interface LevelsStore {
     };
     int [][] levelMapSize = {
             // 0 level
-            {10, 10},
+            {7, 8},
             // 1 level
             {6, 6},
             // 2 level
@@ -79,7 +76,7 @@ public interface LevelsStore {
 
     int [] levelObjectSize = {
             // 0 level
-            80,
+            100,
             // 1 level
             100,
             // 2 level

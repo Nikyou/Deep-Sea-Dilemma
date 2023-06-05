@@ -1,5 +1,6 @@
 package com.deep_sea_dilemma.settings;
 
+import com.deep_sea_dilemma.interfaces.Cosmetics;
 import com.deep_sea_dilemma.levels.LevelsStore;
 import java.io.*;
 
@@ -110,7 +111,7 @@ public class Saver implements LevelsStore {
     public void EndLevelSave(int levelNumber){
         if (!settings.completedLevels[levelNumber]){
             settings.completedLevels[levelNumber] = true;
-            settings.gold = settings.gold + LevelsStore.goldPerLevel[levelNumber];
+            Cosmetics.AddGold(LevelsStore.goldPerLevel[levelNumber]);
             SaveFile();
         }
     }
