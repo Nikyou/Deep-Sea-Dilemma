@@ -4,6 +4,8 @@ import com.deep_sea_dilemma.background.Background;
 import com.deep_sea_dilemma.interfaces.Cosmetics;
 import com.deep_sea_dilemma.interfaces.Game;
 import com.deep_sea_dilemma.objects.Arrow;
+import com.deep_sea_dilemma.objects.Entity;
+import com.deep_sea_dilemma.settings.Settings;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -35,7 +37,6 @@ public class Creator implements LevelsStore {
     }
 
     public Scene ChoseMode(int levelNumber) {
-
         Button backButton = new Button("Back");
         backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> game.window.setScene(createLevelSelectionScene()));
@@ -48,16 +49,27 @@ public class Creator implements LevelsStore {
         playerButton.setPrefSize(game.getButtonWidth(), game.getButtonHeight());
         playerButton.setOnAction(e -> game.window.setScene(createLevelScene(levelNumber, false)));
 
-        BorderPane root = new BorderPane();
+        // Create the stack pane
+        StackPane root = new StackPane();
+
+        // Background image
+        ImageView background = Background.GetBackgroundLevelSelector();
+        background.fitWidthProperty().bind(game.window.widthProperty());
+        background.fitHeightProperty().bind(game.window.heightProperty());
+        root.getChildren().add(background);
+
+        BorderPane rootBorder = new BorderPane();
+        root.getChildren().add(rootBorder);
+        background.toBack();
         VBox centerLayout = new VBox();
 
         BorderPane topContainer = new BorderPane();
         topContainer.setPadding(new Insets(20));
         topContainer.setTop(backButton);
-        root.setTop(topContainer);
+        rootBorder.setTop(topContainer);
 
 
-        root.setCenter(centerLayout);
+        rootBorder.setCenter(centerLayout);
         centerLayout.setAlignment(Pos.CENTER); // Center alignment for the VBox
         centerLayout.setSpacing(30); // Space between the buttons
         centerLayout.getChildren().addAll(CPUButton, playerButton);
@@ -69,7 +81,7 @@ public class Creator implements LevelsStore {
         backButton.getStyleClass().add("back");
 
         // Add css file to scene
-        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
+        rootBorder.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
         // Create the level selection scene and return it
         return new Scene(root);
@@ -250,6 +262,8 @@ public class Creator implements LevelsStore {
         // Add css file to scene
         root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
+        System.gc();
+
         // Create the scene
         return new Scene(root);
     }
@@ -332,6 +346,8 @@ public class Creator implements LevelsStore {
         // Create map
         int tileSize = levelObjectSize[0];
         double halfTileSize = tileSize / 2;
+
+        grid.setPadding(new Insets(0, 0, 0 , (tileSize + halfTileSize)*2));
 
         // Border glow effect
         DropShadow borderGlow= new DropShadow();
@@ -621,14 +637,26 @@ public class Creator implements LevelsStore {
         backButton.setPrefSize(game.getButtonWidth()/2, game.getButtonHeight()/2);
         backButton.setOnAction(e -> game.window.setScene(game.mainMenu));
 
-        BorderPane root = new BorderPane();
+        // Create the stack pane
+        StackPane root = new StackPane();
+
+        // Background image
+        ImageView background = Background.GetBackgroundLevelSelector();
+        background.fitWidthProperty().bind(game.window.widthProperty());
+        background.fitHeightProperty().bind(game.window.heightProperty());
+        root.getChildren().add(background);
+
+        BorderPane rootBorder = new BorderPane();
+        root.getChildren().add(rootBorder);
+        background.toBack();
+
         // Create the grid
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(10));
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(50);
         grid.setVgap(50);
-        root.setCenter(grid);
+        rootBorder.setCenter(grid);
 
         int i = 0;
         for (int y = 0; y < 3; y++) {
@@ -643,7 +671,9 @@ public class Creator implements LevelsStore {
                 levelButton.setOnAction(e -> game.window.setScene(ChoseMode(finalI)));
 
                 if (game.settings.GetCompletedLevels()[i]){
-                    levelButton.getStyleClass().add("completed");
+                    levelButton.getStyleClass().add("level-completed");
+                } else {
+                    levelButton.getStyleClass().add("level");
                 }
 
                 // Add the button to the grid
@@ -666,12 +696,15 @@ public class Creator implements LevelsStore {
             borderGlow.setWidth(70);
             borderGlow.setHeight(70);
             tutorialButton.setEffect(borderGlow);
-        }
 
+            tutorialButton.getStyleClass().add("level");
+        } else {
+            tutorialButton.getStyleClass().add("level-completed");
+        }
 
         BorderPane topContainer = new BorderPane();
         topContainer.setPadding(new Insets(20));
-        root.setTop(topContainer);
+        rootBorder.setTop(topContainer);
         topContainer.setTop(backButton);
 
         // Position the back button
@@ -681,11 +714,10 @@ public class Creator implements LevelsStore {
         backButton.getStyleClass().add("back");
 
         // Add css file to scene
-        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
+        rootBorder.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
         // Create the scene
         return new Scene(root);
-
     }
 
     public Scene createShop(){
@@ -697,9 +729,20 @@ public class Creator implements LevelsStore {
         grid.setVgap(20);
         grid.setAlignment(Pos.CENTER);
 
+        // Create the stack pane
+        StackPane root = new StackPane();
+
+        // Background image
+        ImageView background = Background.GetBackgroundShop();
+        background.fitWidthProperty().bind(game.window.widthProperty());
+        background.fitHeightProperty().bind(game.window.heightProperty());
+        root.getChildren().add(background);
+
         // Create the border pane
-        BorderPane root = new BorderPane();
-        root.setCenter(grid);
+        BorderPane rootBorder = new BorderPane();
+        root.getChildren().add(rootBorder);
+        background.toBack();
+        rootBorder.setCenter(grid);
 
         //Create Back button
         Button backButton = new Button("Back");
@@ -720,7 +763,7 @@ public class Creator implements LevelsStore {
 
         BorderPane topContainer = new BorderPane();
         topContainer.setPadding(new Insets(20));
-        root.setTop(topContainer);
+        rootBorder.setTop(topContainer);
         topContainer.setTop(backButton);
         topContainer.setCenter(titleLabel);
         topContainer.setRight(goldLabel);
@@ -754,15 +797,15 @@ public class Creator implements LevelsStore {
 
         int tileSize = 150;
         //Ship images
-        AddShopImages(grid, game.settings.imageShips, tileSize, 1);
+        AddShopImages(grid, Settings.imageShips, tileSize, 1);
         //Tile images
-        AddShopImages(grid, game.settings.imageTiles, tileSize, 2);
+        AddShopImages(grid, Settings.imageTiles, tileSize, 2);
         //Goal images
-        AddShopImages(grid, game.settings.imageGoals, tileSize, 3);
+        AddShopImages(grid, Settings.imageGoals, tileSize, 3);
         //Vortex images
-        AddShopImages(grid, game.settings.imageVortices, tileSize, 4);
+        AddShopImages(grid, Settings.imageVortices, tileSize, 4);
         //Rock images
-        AddShopImages(grid, game.settings.imageRocks, tileSize, 5);
+        AddShopImages(grid, Settings.imageRocks, tileSize, 5);
 
         // Create buy buttons
         for (int x = 1; x <=5; x++){
@@ -854,7 +897,7 @@ public class Creator implements LevelsStore {
         }
 
         // Add css file to scene
-        root.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
+        rootBorder.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/com/deep_sea_dilemma/styles.css")).toExternalForm());
 
         // Create the scene
         return new Scene(root);
@@ -1014,7 +1057,6 @@ public class Creator implements LevelsStore {
             grid.add(imageView, x, y);
             i++;
         }
-
     }
 
 

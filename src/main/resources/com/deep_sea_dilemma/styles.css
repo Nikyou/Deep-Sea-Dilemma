@@ -4,7 +4,7 @@
     -fx-border-color: transparent; /* Transparent border */
     -fx-padding: 0; /* Remove padding */
     -fx-background-image: url("./css/wood_button.png"); /* Background image */
-    -fx-background-size: cover;
+    -fx-background-size: stretch;
     -fx-text-fill: #FBF6E9; /* Text color */
     -fx-font-family: "Friz Quadrata", sans-serif; /* Font family */
     -fx-font-size: 48px; /* Font size */
@@ -25,11 +25,15 @@
 
 .button.shop {
     -fx-font-size: 36px;
-    -fx-background-size: stretch;
 }
 
-.button.completed {
+.button.level {
+    -fx-font-size: 54px;
+}
+
+.button.level-completed {
     -fx-background-image: url("./css/wood_button_pressed.png"); /* Darker background image */
+    -fx-font-size: 54px;
 }
 
 .label {

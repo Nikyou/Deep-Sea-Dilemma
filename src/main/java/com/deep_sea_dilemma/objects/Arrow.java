@@ -20,7 +20,6 @@ public class Arrow extends Region {
 
     private Image arrowBodyImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowBody.png")));
     private Image arrowHeadImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowHead.png")));
-    private Image arrowBodyTurnImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowBodyTurn.png")));
     private List<ImageView> objects = new ArrayList<>();
 
 

@@ -86,45 +86,85 @@ public class Settings {
             false,
     };
 
-    public Image [] imageTiles = {
+    static public String [] pathImageTiles = {
             // 0
-            Entity.GetImageByPath("riptide.jpg"),
+            "tile1.jpg",
             // 1
-            Entity.GetImageByPath("riptide1.jpg"),
+            "tile2.jpg",
             // 2
-            Entity.GetImageByPath("riptide.jpg"),
+            "tile3.jpg",
     };
-    public Image [] imageShips = {
+    static public String [] pathImageShips = {
             // 0
-            Entity.GetImageByPath("ship.png"),
+            "ship1.png",
             // 1
-            Entity.GetImageByPath("ship.png"),
+            "ship2.png",
             // 2
-            Entity.GetImageByPath("ship.png"),
+            "ship3.png",
     };
-    public Image [] imageGoals = {
+    static public String [] pathImageGoals = {
             // 0
-            Entity.GetImageByPath("goal.png"),
+            "goal1.png",
             // 1
-            Entity.GetImageByPath("goal.png"),
+            "goal2.png",
             // 2
-            Entity.GetImageByPath("goal.png"),
+            "goal3.png",
     };
-    public Image [] imageRocks = {
+    static public String [] pathImageRocks = {
             // 0
-            Entity.GetImageByPath("rock.png"),
+            "rock1.png",
             // 1
-            Entity.GetImageByPath("rock.png"),
+            "rock2.png",
             // 2
-            Entity.GetImageByPath("rock.png"),
+            "rock3.png",
     };
-    public Image [] imageVortices = {
+    static public String [] pathImageVortices = {
             // 0
-            Entity.GetImageByPath("vortex.png"),
+            "vortex1.png",
             // 1
-            Entity.GetImageByPath("vortex.png"),
+            "vortex2.png",
             // 2
-            Entity.GetImageByPath("vortex.png"),
+            "vortex3.png",
+    };
+    static public Image [] imageTiles = {
+            // 0
+            Entity.GetImageByPath(pathImageTiles[0]),
+            // 1
+            Entity.GetImageByPath(pathImageTiles[1]),
+            // 2
+            Entity.GetImageByPath(pathImageTiles[2]),
+    };
+    static public Image [] imageShips = {
+            // 0
+            Entity.GetImageByPath(pathImageShips[0]),
+            // 1
+            Entity.GetImageByPath(pathImageShips[1]),
+            // 2
+            Entity.GetImageByPath(pathImageShips[2]),
+    };
+    static public Image [] imageGoals = {
+            // 0
+            Entity.GetImageByPath(pathImageGoals[0]),
+            // 1
+            Entity.GetImageByPath(pathImageGoals[1]),
+            // 2
+            Entity.GetImageByPath(pathImageGoals[2]),
+    };
+    static public Image [] imageRocks = {
+            // 0
+            Entity.GetImageByPath(pathImageRocks[0]),
+            // 1
+            Entity.GetImageByPath(pathImageRocks[1]),
+            // 2
+            Entity.GetImageByPath(pathImageRocks[2]),
+    };
+    static public Image [] imageVortices = {
+            // 0
+            Entity.GetImageByPath(pathImageVortices[0]),
+            // 1
+            Entity.GetImageByPath(pathImageVortices[1]),
+            // 2
+            Entity.GetImageByPath(pathImageVortices[2]),
     };
 
     public int[] cosmeticsPrice = {
