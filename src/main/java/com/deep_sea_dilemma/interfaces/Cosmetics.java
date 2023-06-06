@@ -1,9 +1,6 @@
 package com.deep_sea_dilemma.interfaces;
 
-import com.deep_sea_dilemma.objects.Entity;
 import com.deep_sea_dilemma.settings.Settings;
-
-import java.util.Arrays;
 
 public class Cosmetics {
 

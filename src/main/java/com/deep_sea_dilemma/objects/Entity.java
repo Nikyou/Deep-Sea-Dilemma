@@ -16,14 +16,14 @@ public abstract class Entity {
         this.image = image;
         this.imageView = new ImageView(image);
         imageView.setMouseTransparent(true);
-    };
+    }
     public void SetImage(String path){
         this.image = new Image(Objects.requireNonNull(getClass().getResourceAsStream(path)));
         this.imageView = new ImageView(this.image);
         imageView.setMouseTransparent(true);
-    };
+    }
 
     public static Image GetImageByPath(String path){
         return new Image(Objects.requireNonNull(Entity.class.getResourceAsStream(path)));
-    };
+    }
 }

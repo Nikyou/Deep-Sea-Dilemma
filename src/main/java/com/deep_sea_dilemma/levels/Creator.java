@@ -4,7 +4,6 @@ import com.deep_sea_dilemma.background.Background;
 import com.deep_sea_dilemma.interfaces.Cosmetics;
 import com.deep_sea_dilemma.interfaces.Game;
 import com.deep_sea_dilemma.objects.Arrow;
-import com.deep_sea_dilemma.objects.Entity;
 import com.deep_sea_dilemma.settings.Settings;
 import javafx.animation.PauseTransition;
 import javafx.geometry.Insets;
@@ -152,14 +151,15 @@ public class Creator implements LevelsStore {
 
         // Create map
         int tileSize = levelObjectSize[levelNumber];
-        double halfTileSize = tileSize / 2;
+        int halfTileSize = tileSize / 2;
+        int quarterTileSize = halfTileSize / 2;
         grid.setPadding(new Insets(0, tileSize + halfTileSize, 0 , 0));
         // Create arrow
         game.arrow = new Arrow(grid,tileSize);
 
         // Populate the grid with squares
-        for (int y = 0; y < LevelsStore.levelMapSize[levelNumber][0]; y++) {
-            for (int x = 0; x < LevelsStore.levelMapSize[levelNumber][1]; x++) {
+        for (int y = 0; y < LevelsStore.levelMapSize[levelNumber][1]; y++) {
+            for (int x = 0; x < LevelsStore.levelMapSize[levelNumber][0]; x++) {
                 // Create the four triangles that form the rectangle
                 Polygon triangle1 = new Polygon(0, 0, 0, tileSize, halfTileSize, halfTileSize); // Left
                 Polygon triangle2 = new Polygon(tileSize, 0, 0, 0, halfTileSize, halfTileSize); // Top
@@ -217,9 +217,9 @@ public class Creator implements LevelsStore {
                 triangle1.setTranslateX(triangle1.getTranslateX());
                 triangle1.setTranslateY(triangle1.getTranslateY());
                 triangle2.setTranslateX(triangle2.getTranslateX());
-                triangle2.setTranslateY(triangle2.getTranslateY() - halfTileSize/2);
+                triangle2.setTranslateY(triangle2.getTranslateY() - quarterTileSize);
                 triangle3.setTranslateX(triangle3.getTranslateX());
-                triangle3.setTranslateY(triangle3.getTranslateY() + halfTileSize/2);
+                triangle3.setTranslateY(triangle3.getTranslateY() + quarterTileSize);
                 triangle4.setTranslateX(triangle4.getTranslateX() + halfTileSize);
                 triangle4.setTranslateY(triangle4.getTranslateY());
 
@@ -242,14 +242,6 @@ public class Creator implements LevelsStore {
             game.ship.SetRandom(levelAISeed[levelNumber]);
             game.pathfinder.CalculateWinPositions();
         }
-
-        //DEBUGGING
-        /*for (int i = 0; i < game.pathfinder.winPositions.size(); i++){
-            int [] cord = game.pathfinder.winPositions.get(i);
-            Rectangle rectangle = new Rectangle(halfTileSize, halfTileSize);
-            rectangle.setFill(Color.GREEN);
-            grid.add(rectangle, cord[0], cord[1]);
-        }*/
 
         // Set styles for button
         backButton.getStyleClass().add("back");
@@ -345,7 +337,8 @@ public class Creator implements LevelsStore {
 
         // Create map
         int tileSize = levelObjectSize[0];
-        double halfTileSize = tileSize / 2;
+        int halfTileSize = tileSize / 2;
+        int quarterTileSize = halfTileSize / 2;
 
         grid.setPadding(new Insets(0, 0, 0 , (tileSize + halfTileSize)*2));
 
@@ -364,8 +357,8 @@ public class Creator implements LevelsStore {
         List<Rectangle> glowContainer = new ArrayList<>();
 
         // Populate the grid with squares
-        for (int y = LevelsStore.levelMapSize[0][0]-1; y >=0 ; y--) {
-            for (int x = 0; x < LevelsStore.levelMapSize[0][1]; x++) {
+        for (int y = LevelsStore.levelMapSize[0][1]-1; y >=0 ; y--) {
+            for (int x = 0; x < LevelsStore.levelMapSize[0][0]; x++) {
                 if ((x ==5 && y == 1) ||
                         (x == 3 && y == 4)
                 ){
@@ -536,9 +529,9 @@ public class Creator implements LevelsStore {
                     triangle1.setTranslateX(triangle1.getTranslateX());
                     triangle1.setTranslateY(triangle1.getTranslateY());
                     triangle2.setTranslateX(triangle2.getTranslateX());
-                    triangle2.setTranslateY(triangle2.getTranslateY() - halfTileSize/2);
+                    triangle2.setTranslateY(triangle2.getTranslateY() - quarterTileSize);
                     triangle3.setTranslateX(triangle3.getTranslateX());
-                    triangle3.setTranslateY(triangle3.getTranslateY() + halfTileSize/2);
+                    triangle3.setTranslateY(triangle3.getTranslateY() + quarterTileSize);
                     triangle4.setTranslateX(triangle4.getTranslateX() + halfTileSize);
                     triangle4.setTranslateY(triangle4.getTranslateY());
                 }

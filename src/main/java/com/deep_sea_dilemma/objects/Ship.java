@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Ship extends Entity implements ShipAI {
 
-    private Pathfinder pathfinder = Pathfinder.Initialize();
+    private final Pathfinder pathfinder = Pathfinder.Initialize();
     private int[] position = new int[2];
     private GridPane grid;
 
@@ -67,10 +67,6 @@ public class Ship extends Entity implements ShipAI {
         return position;
     }
 
-    public void Move(){
-
-    }
-
     @Override
     public int[] AIMakeTurn(int difficulty) {
         SetGenerator();
@@ -124,7 +120,7 @@ public class Ship extends Entity implements ShipAI {
 
     @Override
     public int[] AIMakeTurnHard(List<int[]> allTurns) {
-        double percent = 0.8;
+        double percent = 0.9;
 
         List<int[]> winningPos = new ArrayList<>();
         for (int[] i : allTurns){

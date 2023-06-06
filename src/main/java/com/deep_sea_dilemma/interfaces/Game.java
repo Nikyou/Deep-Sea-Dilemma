@@ -22,14 +22,12 @@ public class Game {
     public Saver saver = Saver.Initialize();
 
 
-    private final double buttonWidth = 300;
     public double getButtonWidth() {
-        return buttonWidth;
+        return 300;
     }
 
-    private final double buttonHeight = 96;
     public double getButtonHeight() {
-        return buttonHeight;
+        return 96;
     }
 
 

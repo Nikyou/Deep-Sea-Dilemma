@@ -32,8 +32,8 @@ public class Main extends Application {
         game.InitializeCosmetic();
 
         // Set the minimum and maximum sizes of the primary stage to allow resizing
-        game.window.setMinWidth(1000);
-        game.window.setMinHeight(1000);
+        game.window.setMinWidth(1500);
+        game.window.setMinHeight(1020);
         game.window.setMaximized(true);
         game.window.setScene(game.mainMenu);
 

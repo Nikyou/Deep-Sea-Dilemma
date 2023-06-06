@@ -11,21 +11,20 @@ import java.util.List;
 import java.util.Objects;
 
 public class Arrow extends Region {
-    private GridPane parentGridPane;
+    private final GridPane parentGridPane;
     private boolean isShown = false;
-    private double cellSize;
-    private double arrowBodySize;
+    private final double cellSize;
+    private final double arrowBodySize;
 
-    private final int bodyDivision = 4 ;
-
-    private Image arrowBodyImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowBody.png")));
-    private Image arrowHeadImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowHead.png")));
+    private final Image arrowBodyImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowBody.png")));
+    private final Image arrowHeadImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("arrowHead.png")));
     private List<ImageView> objects = new ArrayList<>();
 
 
     public Arrow(GridPane gridPane, double cellSize) {
         parentGridPane = gridPane;
         this.cellSize = cellSize;
+        int bodyDivision = 4;
         arrowBodySize = cellSize / bodyDivision;
     }
 
@@ -67,9 +66,7 @@ public class Arrow extends Region {
                 objects.add(arrowHead);
                 parentGridPane.add(arrowHead, endX, endY);
                 switch (lineType){
-                    case 0 -> {
-                        CreateArrowBottomTop(startX, startY, endX, endY, true);
-                    }
+                    case 0 -> CreateArrowBottomTop(startX, startY, endX, endY, true);
                     case 2 -> {
                         for (int y = startY + 1; y <= endY-1; y++){
                             ImageView arrowBody = new ImageView(arrowBodyImage);
@@ -103,9 +100,7 @@ public class Arrow extends Region {
                 parentGridPane.add(arrowHead, endX, endY);
 
                 switch (lineType){
-                    case 0 -> {
-                        CreateArrowLeftRight(startX, startY, endX, endY, false);
-                    }
+                    case 0 -> CreateArrowLeftRight(startX, startY, endX, endY, false);
                     case 1 -> {
                         for (int x = endX + 1; x <= startX-1; x++){
                             ImageView arrowBody = new ImageView(arrowBodyImage);
@@ -134,9 +129,7 @@ public class Arrow extends Region {
                 parentGridPane.add(arrowHead, endX, endY);
 
                 switch (lineType){
-                    case 0 -> {
-                        CreateArrowBottomTop(startX, startY, endX, endY, false);
-                    }
+                    case 0 -> CreateArrowBottomTop(startX, startY, endX, endY, false);
                     case 2 -> {
                         for (int y = endY + 1; y <= startY-1; y++){
                             ImageView arrowBody = new ImageView(arrowBodyImage);
@@ -168,9 +161,7 @@ public class Arrow extends Region {
                 parentGridPane.add(arrowHead, endX, endY);
 
                 switch (lineType){
-                    case 0 -> {
-                        CreateArrowLeftRight(startX, startY, endX, endY, true);
-                    }
+                    case 0 -> CreateArrowLeftRight(startX, startY, endX, endY, true);
                     case 1 -> {
                         for (int x = startX + 1; x <= endX-1; x++){
                             ImageView arrowBody = new ImageView(arrowBodyImage);
